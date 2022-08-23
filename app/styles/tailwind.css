@@ -1,0 +1,150 @@
+:root {
+  color-scheme: light dark;
+
+  --brown1: hsl(30, 40%, 99.1%);
+  --brown2: hsl(30, 50%, 97.6%);
+  --brown3: hsl(30, 52.5%, 94.6%);
+  --brown4: hsl(30, 53%, 91.2%);
+  --brown5: hsl(29, 52.9%, 86.8%);
+  --brown6: hsl(29, 52.5%, 80.9%);
+  --brown7: hsl(29, 51.5%, 72.8%);
+  --brown8: hsl(28, 50%, 63.1%);
+  --brown9: hsl(28, 34%, 51%);
+  --brown10: hsl(27, 31.8%, 47.6%);
+  --brown11: hsl(25, 30%, 41%);
+  --brown12: hsl(20, 30%, 19%);
+
+  --sand1: hsl(50, 20%, 99%);
+  --sand2: hsl(60, 7.7%, 97.5%);
+  --sand3: hsl(59, 6.5%, 95.1%);
+  --sand4: hsl(58, 6.1%, 92.9%);
+  --sand5: hsl(57, 6%, 90.7%);
+  --sand6: hsl(56, 5.9%, 88.4%);
+  --sand7: hsl(55, 5.9%, 85.2%);
+  --sand8: hsl(51, 6%, 77.1%);
+  --sand9: hsl(50, 2%, 55.7%);
+  --sand10: hsl(55, 1.7%, 51.9%);
+  --sand11: hsl(50, 2%, 43.1%);
+  --sand12: hsl(50, 6%, 10%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brown1: hsl(22, 15%, 8.7%);
+    --brown2: hsl(20, 28.3%, 10.4%);
+    --brown3: hsl(20, 28%, 14%);
+    --brown4: hsl(21, 28.4%, 16.5%);
+    --brown5: hsl(22, 28.7%, 18.9%);
+    --brown6: hsl(23, 29%, 22.3%);
+    --brown7: hsl(25, 29.5%, 27.8%);
+    --brown8: hsl(27, 30.1%, 35.9%);
+    --brown9: hsl(28, 34%, 51%);
+    --brown10: hsl(28, 41.4%, 55.8%);
+    --brown11: hsl(28, 60%, 64.5%);
+    --brown12: hsl(30, 67%, 94%);
+
+    --sand1: hsl(61, 2%, 8.3%);
+    --sand2: hsl(60, 3.7%, 10.6%);
+    --sand3: hsl(58, 3.7%, 13.1%);
+    --sand4: hsl(57, 3.6%, 15.3%);
+    --sand5: hsl(56, 3.7%, 17.4%);
+    --sand6: hsl(55, 3.7%, 19.9%);
+    --sand7: hsl(53, 3.7%, 23.6%);
+    --sand8: hsl(50, 3.8%, 30.6%);
+    --sand9: hsl(50, 4%, 42.7%);
+    --sand10: hsl(52, 3.1%, 48.3%);
+    --sand11: hsl(50, 4%, 61.8%);
+    --sand12: hsl(56, 4%, 92.8%);
+  }
+}
+
+.light {
+  --brown1: hsl(30, 40%, 99.1%);
+  --brown2: hsl(30, 50%, 97.6%);
+  --brown3: hsl(30, 52.5%, 94.6%);
+  --brown4: hsl(30, 53%, 91.2%);
+  --brown5: hsl(29, 52.9%, 86.8%);
+  --brown6: hsl(29, 52.5%, 80.9%);
+  --brown7: hsl(29, 51.5%, 72.8%);
+  --brown8: hsl(28, 50%, 63.1%);
+  --brown9: hsl(28, 34%, 51%);
+  --brown10: hsl(27, 31.8%, 47.6%);
+  --brown11: hsl(25, 30%, 41%);
+  --brown12: hsl(20, 30%, 19%);
+
+  --sand1: hsl(50, 20%, 99%);
+  --sand2: hsl(60, 7.7%, 97.5%);
+  --sand3: hsl(59, 6.5%, 95.1%);
+  --sand4: hsl(58, 6.1%, 92.9%);
+  --sand5: hsl(57, 6%, 90.7%);
+  --sand6: hsl(56, 5.9%, 88.4%);
+  --sand7: hsl(55, 5.9%, 85.2%);
+  --sand8: hsl(51, 6%, 77.1%);
+  --sand9: hsl(50, 2%, 55.7%);
+  --sand10: hsl(55, 1.7%, 51.9%);
+  --sand11: hsl(50, 2%, 43.1%);
+  --sand12: hsl(50, 6%, 10%);
+}
+
+.dark {
+  --brown1: hsl(22, 15%, 8.7%);
+  --brown2: hsl(20, 28.3%, 10.4%);
+  --brown3: hsl(20, 28%, 14%);
+  --brown4: hsl(21, 28.4%, 16.5%);
+  --brown5: hsl(22, 28.7%, 18.9%);
+  --brown6: hsl(23, 29%, 22.3%);
+  --brown7: hsl(25, 29.5%, 27.8%);
+  --brown8: hsl(27, 30.1%, 35.9%);
+  --brown9: hsl(28, 34%, 51%);
+  --brown10: hsl(28, 41.4%, 55.8%);
+  --brown11: hsl(28, 60%, 64.5%);
+  --brown12: hsl(30, 67%, 94%);
+
+  --sand1: hsl(61, 2%, 8.3%);
+  --sand2: hsl(60, 3.7%, 10.6%);
+  --sand3: hsl(58, 3.7%, 13.1%);
+  --sand4: hsl(57, 3.6%, 15.3%);
+  --sand5: hsl(56, 3.7%, 17.4%);
+  --sand6: hsl(55, 3.7%, 19.9%);
+  --sand7: hsl(53, 3.7%, 23.6%);
+  --sand8: hsl(50, 3.8%, 30.6%);
+  --sand9: hsl(50, 4%, 42.7%);
+  --sand10: hsl(52, 3.1%, 48.3%);
+  --sand11: hsl(50, 4%, 61.8%);
+  --sand12: hsl(56, 4%, 92.8%);
+}
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: #ad7f58;
+
+  position: fixed;
+  z-index: 1031;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+}
+
+/* Fancy blur effect */
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px #ad7f58, 0 0 5px #ad7f58;
+  opacity: 1;
+
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+  -ms-transform: rotate(3deg) translate(0px, -4px);
+  transform: rotate(3deg) translate(0px, -4px);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
