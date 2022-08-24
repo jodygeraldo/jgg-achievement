@@ -90,8 +90,10 @@ function NavigationItem({
         prefetch="intent"
         className={({ isActive }) =>
           clsx(
-            isActive ? 'bg-primary-5' : 'transition-colors hover:bg-primary-4',
-            'flex items-center gap-2 rounded-md bg-primary-3 p-2 focus:z-10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-8'
+            isActive
+              ? 'bg-primary-5'
+              : 'bg-primary-3 transition-colors hover:bg-primary-4',
+            'flex items-center gap-2 rounded-md p-2 focus:z-10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-8'
           )
         }
       >
