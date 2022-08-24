@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useFetchers,
-  useTransition,
+  useTransition
 } from '@remix-run/react'
 import NProgress from 'nprogress'
 import { useEffect, useMemo } from 'react'
@@ -51,11 +51,11 @@ export default function App() {
 
   return (
     <html lang="en">
-      <head>
+      <head className="h-full">
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="h-full bg-gray-2">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
