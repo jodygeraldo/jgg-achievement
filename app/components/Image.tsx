@@ -1,5 +1,5 @@
 const storagePublicUrl =
-  'https://zgdynxzpcpwowgbwrwik.supabase.co/storage/v1/object/public/tm-image'
+  'https://vtjftugyiqqowxmynddp.supabase.co/storage/v1/object/public/image'
 
 export default function Image({
   src,
