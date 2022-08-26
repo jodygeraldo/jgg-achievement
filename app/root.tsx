@@ -1,5 +1,6 @@
 import type { LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
+import type { SubmitOptions } from '@remix-run/react'
 import {
   Links,
   LiveReload,
@@ -10,12 +11,14 @@ import {
   useFetcher,
   useFetchers,
   useLoaderData,
+  useLocation,
   useTransition
 } from '@remix-run/react'
 import NProgress from 'nprogress'
 import { useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import tailwindStylesUrl from '~/tailwind.css'
+import { hasSessionActive } from './session.server'
 import { getClient } from './supabase'
 
 NProgress.configure({ showSpinner: false })
@@ -42,11 +45,14 @@ export function meta() {
   }
 }
 
-export function loader({ context }: LoaderArgs) {
+export async function loader({ request, context }: LoaderArgs) {
   const supabaseAnonKey = context?.SUPABASE_ANON_KEY
   invariant(supabaseAnonKey, 'Supabase Anon Key is not defined')
 
+  const isSessionActive = await hasSessionActive(request)
+
   return json({
+    isSessionActive,
     ENV: {
       SUPABASE_ANON_KEY: supabaseAnonKey,
     },
@@ -58,6 +64,7 @@ export default function App() {
   const transition = useTransition()
   const fetchers = useFetchers()
   const authFetcher = useFetcher()
+  const { pathname } = useLocation()
 
   const state = useMemo<'idle' | 'loading'>(
     function getGlobalState() {
@@ -77,26 +84,32 @@ export default function App() {
   }, [state])
 
   useEffect(() => {
-    const supabase = getClient()
+    const supabase = getClient(ENV.SUPABASE_ANON_KEY)
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        const authFetcherOptions: SubmitOptions = {
+          method: 'post',
+          action: '/api/auth',
+        }
+
         if (event === 'SIGNED_IN' && session?.access_token) {
           authFetcher.submit(
             {
+              intent: 'login',
               accessToken: session.access_token,
+              refreshToken: session.refresh_token ?? '',
+              expiresIn: session.expires_in?.toString() ?? '0',
+              redirectTo: pathname,
             },
-            {
-              method: 'post',
-              action: '/api/auth/login',
-            }
+            authFetcherOptions
           )
         }
         if (event === 'SIGNED_OUT') {
-          authFetcher.submit(null, {
-            method: 'post',
-            action: '/api/auth/logout',
-          })
+          authFetcher.submit(
+            { intent: 'logout', redirectTo: '/' },
+            authFetcherOptions
+          )
         }
       }
     )
@@ -104,7 +117,7 @@ export default function App() {
     return () => {
       listener?.unsubscribe()
     }
-  }, [authFetcher])
+  }, [ENV.SUPABASE_ANON_KEY, authFetcher, pathname])
 
   return (
     <html lang="en">
@@ -115,11 +128,6 @@ export default function App() {
       <body className="h-full bg-gray-2">
         <Outlet />
         <ScrollRestoration />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(ENV)}`,
-          }}
-        />
         <Scripts />
         <LiveReload />
       </body>
