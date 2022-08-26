@@ -2105,12 +2105,14 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Complete all 3 variations of Pirate Invasion, in Liyue Harbor!',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0222',
         title: 'A Nourishing Friendship',
         description: 'Complete "Fishing Jiangxue" and "Yanxiao\'s Dilemma."',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0223',
@@ -2120,12 +2122,14 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'See that Granny Shan has good business, leave the pigeons alone, leave the dogs alone, leave the cat and fish alone, and leave the leaves alone.',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0224',
         title: 'For the Love of Godwin',
         description: 'Finish "Whispers in the Wind" 5 times.',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0225',
@@ -2133,6 +2137,7 @@ const categoryEntries: CategoryEntries[] = [
         description: "Help Huai'an repair Wangshu Inn's broken bridge.",
         version: '1.0',
         requirements: 'Complete the 2nd part of Stairway to Wangshu.',
+        commission: true,
       },
       {
         id: 'wotw-0226',
@@ -2140,6 +2145,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'Select the highest-value jade on your first try.',
         version: '1.0',
         requirements: 'Can be earned during Diamond in the Rough...',
+        commission: true,
       },
       {
         id: 'wotw-0227',
@@ -2147,6 +2153,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'Apologize to Timmie.',
         version: '1.0',
         requirements: 'Complete Sorry, Timmie!',
+        commission: true,
       },
       {
         id: 'wotw-0228',
@@ -2154,6 +2161,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'Only bring materials for a training dummy to Herman.',
         version: '1.0',
         requirements: 'Destroy the dummy in The Limitations of an Adventurer.',
+        commission: true,
       },
       {
         id: 'wotw-0229',
@@ -2161,6 +2169,7 @@ const categoryEntries: CategoryEntries[] = [
         description: "Hear Timmie's story.",
         version: '1.2',
         requirements: "Complete A Boy's Letter.",
+        commission: true,
       },
       {
         id: 'wotw-0230',
@@ -2168,6 +2177,7 @@ const categoryEntries: CategoryEntries[] = [
         description: "Cure Anna's illness.",
         version: '1.0',
         requirements: 'Complete Recuperating From a Severe Illness.',
+        commission: true,
       },
       {
         id: 'wotw-0231',
@@ -2175,12 +2185,14 @@ const categoryEntries: CategoryEntries[] = [
         description: "Witness Jilliana's tale.",
         version: '1.0',
         requirements: "Complete Vile's version of A Surprise Gift.",
+        commission: true,
       },
       {
         id: 'wotw-0232',
         title: 'Scholarly Pretensions',
         description: 'Complete "The Lost Relic" and "A Little Raid."',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0233',
@@ -2189,12 +2201,14 @@ const categoryEntries: CategoryEntries[] = [
           "Complete So-called Work and receive Linling's poetry anthology.",
         version: '1.0',
         requirements: 'Complete So-Called Work.',
+        commission: true,
       },
       {
         id: 'wotw-0234',
         title: "All's Well That Ends Well",
         description: 'Complete the quest "For Old Time\'s Sake."',
         version: '1.1',
+        commission: true,
       },
       {
         id: 'wotw-0235',
@@ -2202,6 +2216,7 @@ const categoryEntries: CategoryEntries[] = [
         description: "Steal a peek at Chang the Ninth's draft manuscript.",
         version: '1.0',
         requirements: 'Take a peek at the book in A Novel Plan.',
+        commission: true,
       },
       {
         id: 'wotw-0236',
@@ -2210,12 +2225,14 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'In Good Sign, attack the pigeons, scare away the dogs, collect the fish, and burn or blow away the leaves.',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0237',
         title: 'Get Your Own Emergency Food!',
         description: 'Consume the food during "Food Delivery."',
         version: '1.0',
+        commission: true,
       },
       {
         id: 'wotw-0238',
@@ -2223,6 +2240,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'Help Sango and Ryuuji solve the case.',
         version: '2.0',
         requirements: 'Complete Bantan Sango Case File: Case-Closing Time.',
+        commission: true,
       },
       {
         id: 'wotw-0239',
@@ -2230,6 +2248,7 @@ const categoryEntries: CategoryEntries[] = [
         description: "Witness Ryuuji's tale.",
         version: '2.2',
         requirements: 'Complete Bantan Sango Case File: Cleanup Work.',
+        commission: true,
       },
       {
         id: 'wotw-0240',
@@ -2237,6 +2256,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'Heal Tang Wen with some delicious dishes.',
         version: '2.0',
         requirements: 'Complete Absolutely Unique Delicacy.',
+        commission: true,
       },
       {
         id: 'wotw-0241',
@@ -2245,6 +2265,7 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Find Xiangling during The Gourmet Supremos: Breakthrough Thinking.',
         version: '2.0',
+        commission: true,
       },
       {
         id: 'wotw-0242',
@@ -2253,6 +2274,7 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Let Xudong and Kamei Munehisa finish their dishes first once each in The Gourmet Supremos: Cook-Off. This does not require choosing both of their versions.',
         version: '2.0',
+        commission: true,
       },
       {
         id: 'wotw-0243',
@@ -2261,6 +2283,7 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Answer all three questions correctly in The Gourmet Supremos: Foodie Quiz.',
         version: '2.0',
+        commission: true,
       },
       {
         id: 'wotw-0244',
@@ -2270,6 +2293,7 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Clear both of the camps in The Gourmet Supremos: Extreme Cookery.',
         version: '2.0',
+        commission: true,
       },
       {
         id: 'wotw-0245',
@@ -2278,6 +2302,7 @@ const categoryEntries: CategoryEntries[] = [
           'Receive the complaint that Konda Densuke lodges in "Post-Sale Service".',
         version: '2.0',
         requirements: 'Collect all 10 mushrooms during Post-Sale Service.',
+        commission: true,
       },
       {
         id: 'wotw-0246',
@@ -2303,6 +2328,7 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Complete This Novel... Seems Familiar? and This Novel Seems... Problematic?',
         version: '2.2',
+        commission: true,
       },
       {
         id: 'wotw-0249',
@@ -2311,6 +2337,7 @@ const categoryEntries: CategoryEntries[] = [
         requirements:
           'Complete An Art to Be Honed and/or Ceaseless Training 5 times.',
         version: '2.0',
+        commission: true,
       },
       {
         id: 'wotw-0250',
@@ -2679,6 +2706,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'Help Anna become an adventurer.',
         version: '2.4',
         requirements: 'Complete Anna the Adventurer!.',
+        commission: true,
       },
       {
         id: 'wotw-0287',
@@ -2686,6 +2714,7 @@ const categoryEntries: CategoryEntries[] = [
         description: 'A young man is about to embark on a long journey...',
         version: '2.4',
         requirements: 'Complete The Little Pirate Goes Out to Sea.',
+        commission: true,
       },
       {
         id: 'wotw-0288',
