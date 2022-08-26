@@ -1,4 +1,4 @@
-const categories = [
+export const categories = [
   {
     id: 'wotw',
     title: 'Wonders of the World',
@@ -181,9 +181,11 @@ type BaseEntry = {
 
 type Entry = {
   description: string
+  steps?: undefined
 } & BaseEntry
 
 type EntryWithStep = {
+  description?: undefined
   steps: { id: string; description: string }[]
 } & BaseEntry
 
@@ -192,7 +194,7 @@ type CategoryEntries = {
   entries: (Entry | EntryWithStep)[]
 }
 
-const categoryEntries: CategoryEntries[] = [
+export const categoryEntries: CategoryEntries[] = [
   {
     id: 'wotw',
     entries: [
@@ -5459,5 +5461,3 @@ const categoryEntries: CategoryEntries[] = [
     ],
   },
 ]
-
-export { categories, categoryEntries }
