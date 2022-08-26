@@ -205,7 +205,6 @@ const categoryEntries: CategoryEntries[] = [
       {
         id: 'wotw-0002',
         title: 'Zoo Tycoon',
-        description: 'Use the Omni-Ubiquity Net item to capture 1 wild animal.',
         version: '2.3',
         steps: [
           {
@@ -5462,4 +5461,3 @@ const categoryEntries: CategoryEntries[] = [
 ]
 
 export { categories, categoryEntries }
-
