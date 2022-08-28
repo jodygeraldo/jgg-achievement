@@ -150,7 +150,7 @@ export default function LoginPage() {
                   id="email"
                   name={email.config.name}
                   defaultValue={email.config.defaultValue}
-                  className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-7 bg-gray-3 px-3 py-2 text-gray-12 placeholder-gray-8 focus:z-10 focus:border-primary-8 focus:outline-none focus:ring-primary-8 sm:text-sm"
+                  className="relative block w-full appearance-none rounded-t-md border border-gray-7 bg-gray-3 px-3 py-2 text-gray-12 placeholder-gray-8 focus:z-10 focus:border-primary-8 focus:outline-none focus:ring-primary-8 sm:text-sm"
                   placeholder="Email address"
                   autoComplete="email"
                   autoFocus={true}
