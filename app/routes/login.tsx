@@ -9,7 +9,7 @@ import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
-import { Button } from '~/components/Button'
+import { Button, ButtonLink } from '~/components/Button'
 import { createUserSession, hasSessionActive } from '~/session.server'
 import { getClient } from '~/supabase.server'
 import { DEFAULT_REDIRECT } from '~/utils'
@@ -209,14 +209,23 @@ export default function LoginPage() {
             </div>
           </fieldset>
 
-          <Button
-            id="signup"
-            type="submit"
-            parentBgColorStep={2}
-            extendClass="w-full"
-          >
-            Sign in
-          </Button>
+          <div className="sm:flex sm:items-center sm:gap-4">
+            <ButtonLink
+              to="/passwordless"
+              prefetch="intent"
+              parentBgColorStep={2}
+            >
+              Passwordless sign in
+            </ButtonLink>
+
+            <Button
+              type="submit"
+              parentBgColorStep={2}
+              extendClass="w-full mt-4 sm:mt-0"
+            >
+              Sign in
+            </Button>
+          </div>
         </Form>
       </div>
     </div>

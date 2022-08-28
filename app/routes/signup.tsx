@@ -238,12 +238,7 @@ export default function SignupPage() {
             </div>
           </fieldset>
 
-          <Button
-            id="signup"
-            type="submit"
-            parentBgColorStep={2}
-            extendClass="w-full"
-          >
+          <Button type="submit" parentBgColorStep={2} extendClass="w-full">
             Sign up
           </Button>
         </Form>
