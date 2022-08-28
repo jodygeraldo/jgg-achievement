@@ -146,7 +146,6 @@ export default function PasswordlessAuthPage() {
 
     submit(
       {
-        intent: 'login',
         accessToken: accessToken.replace('access_token=', ''),
         refreshToken: refreshToken.replace('refresh_token=', ''),
         expiresIn: expiresIn.replace('expires_in=', ''),
@@ -180,7 +179,12 @@ export default function PasswordlessAuthPage() {
               </Link>
             </p>
           </div>
-          <Form method="post" className="mt-8 space-y-6" {...formProps}>
+          <Form
+            action="/passwordless"
+            method="post"
+            className="mt-8 space-y-6"
+            {...formProps}
+          >
             <fieldset>
               <div className="rounded-md shadow-sm">
                 <label htmlFor="email" className="sr-only">
