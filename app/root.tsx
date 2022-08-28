@@ -13,7 +13,6 @@ import {
 import NProgress from 'nprogress'
 import { useEffect, useMemo } from 'react'
 import tailwindStylesUrl from '~/tailwind.css'
-import { checkSession, hasSessionActive } from './session.server'
 
 NProgress.configure({ showSpinner: false })
 
@@ -37,16 +36,6 @@ export function meta() {
     description: 'JGG Achievement is Genshin Impact achievement tracker.',
     keywords: 'Genshin Impact,achievement,tracker',
   }
-}
-
-export async function loader({ request }: LoaderArgs) {
-  await checkSession(request)
-
-  const isSessionActive = await hasSessionActive(request)
-
-  return json({
-    isSessionActive,
-  })
 }
 
 export default function App() {

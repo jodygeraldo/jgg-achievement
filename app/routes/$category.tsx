@@ -1,20 +1,25 @@
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
+import type { LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import { Form, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import clsx from 'clsx'
 import * as React from 'react'
 import { Button, ButtonLink } from '~/components/Button'
 import Image from '~/components/Image'
-import { useRootData } from '~/utils'
+import { checkSession, hasSessionActive } from '~/session.server'
 import { getCategories } from '~/utils/category.server'
 
-export function loader() {
-  return json({ data: getCategories() })
+export async function loader({ request }: LoaderArgs) {
+  await checkSession(request)
+
+  return json({
+    data: getCategories(),
+    isSessionActive: await hasSessionActive(request),
+  })
 }
 
 export default function CategoryLayout() {
-  const { data } = useLoaderData<typeof loader>()
-  const { isSessionActive } = useRootData()
+  const { data, isSessionActive } = useLoaderData<typeof loader>()
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

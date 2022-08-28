@@ -40,7 +40,7 @@ export async function checkSession(request: Request) {
   const expiresAt = session.get(USER_EXPIRES_AT)
   const now = new Date().getTime()
 
-  if (expiresAt && parseInt(expiresAt) > now) {
+  if (expiresAt && parseInt(expiresAt) < now) {
     throw redirect(DEFAULT_REDIRECT, {
       headers: {
         'Set-Cookie': await sessionStorage.destroySession(session),
@@ -85,6 +85,7 @@ export async function createUserSession({
   const expiresIn = parseInt(userSession.expiresIn)
   const session = await getSession(request)
   const expiresAt = new Date().getTime() + expiresIn
+
   session.set(USER_EMAIL, email)
   session.set(USER_ACCESS_TOKEN, userSession.accessToken)
   session.set(USER_REFRESH_TOKEN, userSession.refreshToken)

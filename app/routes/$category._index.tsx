@@ -3,14 +3,44 @@ import { CheckIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
-import type { LoaderArgs } from '@remix-run/cloudflare'
+import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import { useFetcher, useLoaderData, useLocation } from '@remix-run/react'
+import clsx from 'clsx'
+import { getFormDataOrFail } from 'remix-params-helper'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
+import { initSupabaseAuth } from '~/session.server'
 import { useMatchesDataForceSchema } from '~/utils'
 import { getCategoryEntries } from '~/utils/category.server'
+
+const FormDataSchema = z.object({
+  achId: z.string(),
+  complete: z.string().optional(),
+})
+
+export async function action({ request, params, context }: ActionArgs) {
+  const { category } = params
+  invariant(category, 'Category param is not defined')
+  const id = category.split('-').at(-1)!
+
+  const { achId, complete } = await getFormDataOrFail(request, FormDataSchema)
+
+  const supabase = await initSupabaseAuth(request, context)
+  const { error } = await supabase
+    .from(id)
+    .upsert(
+      { ach_id: achId, complete: complete ? true : false },
+      { returning: 'minimal' }
+    )
+
+  if (error) {
+    throw json({ message: error.message }, 500)
+  }
+
+  return json(null)
+}
 
 export async function loader({ params, context }: LoaderArgs) {
   const { category } = params
@@ -90,34 +120,20 @@ export default function CategoryMainPage() {
                 {entry.requirements && <Popover content={entry.requirements} />}
               </div>
               {'description' in entry ? (
-                <div className="flex items-center justify-between gap-12">
-                  <LabelPrimitive.Root asChild>
-                    <label
-                      htmlFor={entry.id}
-                      className="mt-1 max-w-prose text-sm text-gray-11"
-                    >
-                      {entry.description}
-                    </label>
-                  </LabelPrimitive.Root>
-                  <Checkbox id={entry.id} />
-                </div>
+                <AchievementInput
+                  key={entry.id}
+                  id={entry.id}
+                  description={entry.description}
+                />
               ) : (
                 <div>
                   {entry.steps.map((step) => (
-                    <div
+                    <AchievementInput
                       key={step.id}
-                      className="flex items-center justify-between gap-12 py-2"
-                    >
-                      <LabelPrimitive.Root asChild>
-                        <label
-                          htmlFor={step.id}
-                          className="mt-1 max-w-prose text-sm text-gray-11"
-                        >
-                          {step.description}
-                        </label>
-                      </LabelPrimitive.Root>
-                      <Checkbox id={step.id} />
-                    </div>
+                      id={step.id}
+                      description={step.description}
+                      extraPadding
+                    />
                   ))}
                 </div>
               )}
@@ -126,6 +142,47 @@ export default function CategoryMainPage() {
         </div>
       </div>
     </ScrollArea>
+  )
+}
+
+function AchievementInput({
+  id,
+  description,
+  extraPadding,
+}: {
+  id: string
+  description: string
+  extraPadding?: boolean
+}) {
+  const fetcher = useFetcher()
+  const { pathname } = useLocation()
+
+  function handleCheckChange(e: React.FormEvent<HTMLFormElement>) {
+    fetcher.submit(new FormData(e.currentTarget), {
+      action: pathname + '?index',
+      method: 'post',
+      replace: true,
+    })
+  }
+
+  return (
+    <fetcher.Form
+      key={id}
+      className={clsx(
+        extraPadding && 'py-2',
+        'flex items-center justify-between gap-12'
+      )}
+      onChange={(e) => handleCheckChange(e)}
+    >
+      <input type="hidden" name="achId" value={id} />
+      <LabelPrimitive.Root
+        htmlFor={id}
+        className="mt-1 max-w-prose text-sm text-gray-11"
+      >
+        {description}
+      </LabelPrimitive.Root>
+      <Checkbox id={id} />
+    </fetcher.Form>
   )
 }
 
