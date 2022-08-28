@@ -1,9 +1,11 @@
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import { json } from '@remix-run/cloudflare'
-import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
+import { Form, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import clsx from 'clsx'
 import * as React from 'react'
+import { Button, ButtonLink } from '~/components/Button'
 import Image from '~/components/Image'
+import { useRootData } from '~/utils'
 import { getCategories } from '~/utils/category.server'
 
 export function loader() {
@@ -12,38 +14,42 @@ export function loader() {
 
 export default function CategoryLayout() {
   const { data } = useLoaderData<typeof loader>()
+  const { isSessionActive } = useRootData()
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold leading-8 tracking-tight text-primary-12 sm:text-4xl sm:tracking-tight">
-          Genshin Impact Achievement
-        </h1>
-        <p
-          className={clsx(
-            data.entries.done === data.entries.total
-              ? 'font-medium text-primary-12'
-              : 'text-gray-11',
-            'flex items-center gap-0.5 tabular-nums'
-          )}
-        >
-          <span>{data.entries.done}</span>/<span>{data.entries.total}</span>
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 15 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div>
+          <h1 className="text-3xl font-bold leading-8 tracking-tight text-primary-12 sm:text-4xl sm:tracking-tight">
+            Genshin Impact Achievement
+          </h1>
+          <p
+            className={clsx(
+              data.entries.done === data.entries.total
+                ? 'font-medium text-primary-12'
+                : 'text-gray-11',
+              'mt-2 flex items-center gap-0.5 tabular-nums'
+            )}
           >
-            <path
-              d="M9.875 7.5C9.875 8.81168 8.81168 9.875 7.5 9.875C6.18832 9.875 5.125 8.81168 5.125 7.5C5.125 6.18832 6.18832 5.125 7.5 5.125C8.81168 5.125 9.875 6.18832 9.875 7.5Z"
-              fill="currentColor"
-            />
-          </svg>
-          <span>
-            {((data.entries.done / data.entries.total) * 100).toFixed(2)}%
-          </span>
-        </p>
+            <span>{data.entries.done}</span>/<span>{data.entries.total}</span>
+            &nbsp;&bull;&nbsp;
+            <span>
+              {((data.entries.done / data.entries.total) * 100).toFixed(2)}%
+            </span>
+          </p>
+        </div>
+
+        {isSessionActive ? (
+          <Form method="post" action="/logout">
+            <Button type="submit" variant="secondary" parentBgColorStep={2}>
+              Sign out
+            </Button>
+          </Form>
+        ) : (
+          <ButtonLink to="/login" prefetch="intent" parentBgColorStep={2}>
+            Sign in
+          </ButtonLink>
+        )}
       </div>
       <div className="mt-6 flex gap-4">
         <NavigationList />
@@ -109,18 +115,7 @@ function NavigationItem({
             )}
           >
             <span>{entries.done}</span>/<span>{entries.total}</span>
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.875 7.5C9.875 8.81168 8.81168 9.875 7.5 9.875C6.18832 9.875 5.125 8.81168 5.125 7.5C5.125 6.18832 6.18832 5.125 7.5 5.125C8.81168 5.125 9.875 6.18832 9.875 7.5Z"
-                fill="currentColor"
-              />
-            </svg>
+            &nbsp;&bull;&nbsp;
             <span>{(entries.done / entries.total) * 100}%</span>
           </p>
         </div>
@@ -131,7 +126,7 @@ function NavigationItem({
 
 function ScrollArea({ children }: { children: React.ReactNode }) {
   return (
-    <ScrollAreaPrimitive.Root className="h-[calc(100vh-8rem)] max-w-xs overflow-hidden rounded-md [box-shadow:0_2px_10px_var(--blackA7)]">
+    <ScrollAreaPrimitive.Root className="h-[calc(100vh-10rem)] max-w-xs overflow-hidden rounded-md [box-shadow:0_2px_10px_var(--blackA7)]">
       <ScrollAreaPrimitive.Viewport className="h-full w-full [border-radius:inherit]">
         {children}
       </ScrollAreaPrimitive.Viewport>

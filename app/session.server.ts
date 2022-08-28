@@ -1,7 +1,8 @@
 import type { AppLoadContext, Session } from '@remix-run/cloudflare'
 import { createCookieSessionStorage, redirect } from '@remix-run/cloudflare'
 import invariant from 'tiny-invariant'
-import { getClient } from './supabase'
+import { getClient } from './supabase.server'
+import { DEFAULT_REDIRECT } from './utils'
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -14,6 +15,7 @@ export const sessionStorage = createCookieSessionStorage({
   },
 })
 
+const USER_EMAIL = 'userEmail'
 const USER_ACCESS_TOKEN = 'accessToken'
 const USER_REFRESH_TOKEN = 'refreshToken'
 const USER_EXPIRES_AT = 'expiresAt'
@@ -21,6 +23,11 @@ const USER_EXPIRES_AT = 'expiresAt'
 export async function getSession(request: Request) {
   const cookie = request.headers.get('Cookie')
   return sessionStorage.getSession(cookie)
+}
+
+export async function getUserEmail(request: Request) {
+  const session = await getSession(request)
+  return session.has(USER_EMAIL)
 }
 
 export async function hasSessionActive(request: Request) {
@@ -77,7 +84,7 @@ async function refreshUserSession({
   session.set(USER_ACCESS_TOKEN, userSession.accessToken)
   session.set(USER_REFRESH_TOKEN, userSession.refreshToken)
   session.set(USER_EXPIRES_AT, expiresAt)
-  return redirect('/', {
+  return redirect(DEFAULT_REDIRECT, {
     headers: {
       'Set-Cookie': await sessionStorage.commitSession(session, {
         maxAge: userSession.expiresIn - 60,
@@ -88,26 +95,32 @@ async function refreshUserSession({
 
 export async function createUserSession({
   request,
+  email,
   userSession,
+  remember,
   redirectTo,
 }: {
   request: Request
+  email: string
   userSession: {
     accessToken: string
     refreshToken: string
-    expiresIn: number
+    expiresIn: string
   }
+  remember?: boolean
   redirectTo: string
 }) {
+  const expiresIn = parseInt(userSession.expiresIn)
   const session = await getSession(request)
-  const expiresAt = new Date().getTime() + userSession.expiresIn
+  const expiresAt = new Date().getTime() + expiresIn
+  session.set(USER_EMAIL, email)
   session.set(USER_ACCESS_TOKEN, userSession.accessToken)
   session.set(USER_REFRESH_TOKEN, userSession.refreshToken)
   session.set(USER_EXPIRES_AT, expiresAt)
-  return redirect(redirectTo, {
+  throw redirect(redirectTo, {
     headers: {
       'Set-Cookie': await sessionStorage.commitSession(session, {
-        maxAge: userSession.expiresIn - 60,
+        maxAge: remember ? expiresIn - 60 : undefined,
       }),
     },
   })
@@ -115,7 +128,7 @@ export async function createUserSession({
 
 export async function logout(request: Request) {
   const session = await getSession(request)
-  return redirect('/', {
+  throw redirect(DEFAULT_REDIRECT, {
     headers: {
       'Set-Cookie': await sessionStorage.destroySession(session),
     },

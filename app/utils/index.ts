@@ -1,6 +1,6 @@
 import { useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
-import type { z } from 'zod'
+import { z } from 'zod'
 
 /**
  * This base hook is used in other hooks to quickly search for specific data
@@ -19,7 +19,7 @@ export function useMatchesData(
   return route?.data
 }
 
-export default function useMatchesDataForceSchema<T extends z.ZodTypeAny>({
+export function useMatchesDataForceSchema<T extends z.ZodTypeAny>({
   id,
   schema,
 }: {
@@ -32,4 +32,14 @@ export default function useMatchesDataForceSchema<T extends z.ZodTypeAny>({
   const result = schema.parse(data)
 
   return result as SchemaType
+}
+
+export const DEFAULT_REDIRECT = '/wonders-of-the-world-wotw'
+
+const RootDataSchema = z.object({
+  isSessionActive: z.boolean(),
+})
+
+export function useRootData() {
+  return useMatchesDataForceSchema({ id: 'root', schema: RootDataSchema })
 }
