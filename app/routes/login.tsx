@@ -222,6 +222,8 @@ export default function LoginPage() {
               to="/passwordless"
               prefetch="intent"
               parentBgColorStep={2}
+              variant="secondary"
+              extendClass="w-full"
             >
               Passwordless sign in
             </ButtonLink>

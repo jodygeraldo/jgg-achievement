@@ -234,7 +234,13 @@ export default function PasswordlessAuthPage() {
             </fieldset>
 
             <div className="sm:flex sm:items-center sm:gap-4">
-              <ButtonLink to="/login" prefetch="intent" parentBgColorStep={2}>
+              <ButtonLink
+                to="/login"
+                prefetch="intent"
+                parentBgColorStep={2}
+                variant="secondary"
+                extendClass="w-full"
+              >
                 Password sign in
               </ButtonLink>
 
