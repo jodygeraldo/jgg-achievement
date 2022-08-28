@@ -14,8 +14,8 @@
     "dev:wrangler": "cross-env NODE_ENV=development wrangler pages dev ./public",
     "dev": "remix build && run-p \"dev:*\"",
     "start": "cross-env NODE_ENV=production npm run dev:wrangler",
-    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint ./app/**/*.{ts,tsx}",
-    "fmt": "prettier --write --cache ./app/**/*.{ts,tsx}",
+    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint **/*.{ts,tsx}",
+    "fmt": "prettier --write --cache .",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -69,7 +69,7 @@
     "node": ">=14"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint ./app/**/*.{ts,tsx}",
-    "*.{js,jsx,ts,tsx,css,json,yaml}": "prettier --write --cache ./app/**/*.{ts,tsx}"
+    "*.{ts,tsx}": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint --fix **/*.{ts,tsx}",
+    "*.{ts,tsx,css,json,yaml}": "prettier --write --cache ."
   }
 }
