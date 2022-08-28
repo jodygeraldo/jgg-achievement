@@ -12,9 +12,8 @@ import {
 } from '@remix-run/react'
 import NProgress from 'nprogress'
 import { useEffect, useMemo } from 'react'
-import invariant from 'tiny-invariant'
 import tailwindStylesUrl from '~/tailwind.css'
-import { hasSessionActive } from './session.server'
+import { checkSession, hasSessionActive } from './session.server'
 
 NProgress.configure({ showSpinner: false })
 
@@ -40,9 +39,8 @@ export function meta() {
   }
 }
 
-export async function loader({ request, context }: LoaderArgs) {
-  const supabaseAnonKey = context?.SUPABASE_ANON_KEY
-  invariant(supabaseAnonKey, 'Supabase Anon Key is not defined')
+export async function loader({ request }: LoaderArgs) {
+  await checkSession(request)
 
   const isSessionActive = await hasSessionActive(request)
 
