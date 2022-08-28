@@ -5,7 +5,13 @@ import { CheckIcon } from '@radix-ui/react-icons'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
-import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
+import {
+  Form,
+  Link,
+  useActionData,
+  useSearchParams,
+  useTransition,
+} from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
@@ -127,6 +133,8 @@ export default function SignupPage() {
     }
   }, [formState])
 
+  const busy = useTransition().state === 'submitting'
+
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
@@ -238,8 +246,13 @@ export default function SignupPage() {
             </div>
           </fieldset>
 
-          <Button type="submit" parentBgColorStep={2} extendClass="w-full">
-            Sign up
+          <Button
+            type="submit"
+            parentBgColorStep={2}
+            extendClass="w-full"
+            disabled={busy}
+          >
+            {busy ? 'Creating your account...' : 'Sign up'}
           </Button>
         </Form>
       </div>

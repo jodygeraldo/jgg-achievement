@@ -12,6 +12,7 @@ import {
   useLocation,
   useSearchParams,
   useSubmit,
+  useTransition,
 } from '@remix-run/react'
 import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
@@ -158,6 +159,8 @@ export default function PasswordlessAuthPage() {
     )
   }, [hash, redirectTo, rememberState, submit])
 
+  const busy = useTransition().state === 'submitting'
+
   return (
     <>
       <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -240,8 +243,9 @@ export default function PasswordlessAuthPage() {
                 type="submit"
                 parentBgColorStep={2}
                 extendClass="w-full mt-4 sm:mt-0"
+                disabled={busy}
               >
-                Send email
+                {busy ? 'Sending email...' : 'Send email'}
               </Button>
             </div>
           </Form>
