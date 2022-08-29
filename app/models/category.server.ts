@@ -2,7 +2,49 @@ import type { AppLoadContext } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import { initSupabaseAuth } from '~/session.server'
 import type { definitions } from '~/supabase'
-import { getCategoryEntriesId } from '~/utils/category.server'
+import { getCategoriesId, getCategoryEntriesId } from '~/utils/category.server'
+
+export async function getCompleteCount({
+  request,
+  context,
+}: {
+  request: Request
+  context: AppLoadContext
+}) {
+  const supabase = await initSupabaseAuth(request, context)
+  const categoriesId = getCategoriesId()
+
+  const categories = categoriesId.map((id) => {
+    return {
+      id,
+      supabaseQuery: supabase
+        .from<Pick<definitions['wotw'], 'complete'>>(id)
+        .select('complete', {
+          count: 'exact',
+        })
+        .filter('complete', 'eq', true),
+    }
+  })
+
+  const ids = categories.map((category) => category.id)
+  const queries = categories.map((category) => category.supabaseQuery)
+
+  const data = await Promise.all(queries)
+
+  const error = data.map((d) => d.error).some(Boolean)
+
+  if (error) {
+    throw json({ message: 'Something went wrong' }, 500)
+  }
+
+  const categoriesData = data.map((c, i) => ({
+    id: ids[i],
+    count: c.count,
+  }))
+  const totalCount = data.reduce((prev, curr) => prev + (curr.count ?? 0), 0)
+
+  return { categoriesData, totalCount }
+}
 
 export async function getUserCategoryEntriesById({
   id,

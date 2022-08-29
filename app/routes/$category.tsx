@@ -7,20 +7,23 @@ import * as React from 'react'
 import { useHydrated } from 'remix-utils'
 import { Button, ButtonLink } from '~/components/Button'
 import Image from '~/components/Image'
+import { getCompleteCount } from '~/models/category.server'
 import { checkSession, hasSessionActive } from '~/session.server'
 import { getCategories } from '~/utils/category.server'
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request, context }: LoaderArgs) {
   await checkSession(request)
 
   return json({
-    data: getCategories(),
+    data: getCategories(await getCompleteCount({ request, context })),
     isSessionActive: await hasSessionActive(request),
   })
 }
 
 export default function CategoryLayout() {
   const { data, isSessionActive } = useLoaderData<typeof loader>()
+
+  const percentage = (data.entries.done / data.entries.total) * 100
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -40,7 +43,10 @@ export default function CategoryLayout() {
             <span>{data.entries.done}</span>/<span>{data.entries.total}</span>
             &nbsp;&bull;&nbsp;
             <span>
-              {((data.entries.done / data.entries.total) * 100).toFixed(2)}%
+              {percentage.toString().includes('.')
+                ? percentage.toFixed(2)
+                : percentage}
+              %
             </span>
           </p>
         </div>
@@ -104,6 +110,9 @@ function NavigationItem({
   entries: { done: number; total: number }
 }) {
   const link = `/${title.replace(/\s/g, '-').toLowerCase()}-${id}`
+
+  const percentage = (entries.done / entries.total) * 100
+
   return (
     <div>
       <NavLink
@@ -131,7 +140,12 @@ function NavigationItem({
           >
             <span>{entries.done}</span>/<span>{entries.total}</span>
             &nbsp;&bull;&nbsp;
-            <span>{(entries.done / entries.total) * 100}%</span>
+            <span>
+              {percentage.toString().includes('.')
+                ? percentage.toFixed(2)
+                : percentage}
+              %
+            </span>
           </p>
         </div>
       </NavLink>

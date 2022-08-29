@@ -3,16 +3,30 @@ import invariant from 'tiny-invariant'
 import { categories, categoryEntries } from '~/data/achievement/en.server'
 import type { definitions } from '~/supabase'
 
-export function getCategories() {
+export function getCategoriesId() {
+  return categories.map((category) => category.id)
+}
+
+export function getCategories({
+  categoriesData,
+  totalCount,
+}: {
+  categoriesData: {
+    id: string
+    count: number | null
+  }[]
+  totalCount: number
+}) {
   const updatedCategories = categories.map((category) => {
     const entries = categoryEntries.find(
       (entries) => entries.id === category.id
     )
     if (!entries) throw new Error('Category id is not defined')
+    const { count } = categoriesData.find((cd) => cd.id === entries.id)!
     return {
       ...category,
       entries: {
-        done: 15,
+        done: count ? count : 0,
         total: entries.entries.reduce(
           (prev, curr) => ('description' in curr ? prev + 1 : prev + 3),
           0
@@ -22,10 +36,7 @@ export function getCategories() {
   })
   return {
     entries: {
-      done: updatedCategories.reduce(
-        (prev, curr) => prev + curr.entries.done,
-        0
-      ),
+      done: totalCount,
       total: updatedCategories.reduce(
         (prev, curr) => prev + curr.entries.total,
         0
