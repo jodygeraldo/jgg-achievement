@@ -4,8 +4,14 @@ import * as LabelPrimitive from '@radix-ui/react-label'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
-import { json } from '@remix-run/cloudflare'
-import { useFetcher, useLoaderData, useLocation } from '@remix-run/react'
+import { json, redirect } from '@remix-run/cloudflare'
+import {
+  Form,
+  useFetcher,
+  useLoaderData,
+  useLocation,
+  useTransition,
+} from '@remix-run/react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { getFormDataOrFail } from 'remix-params-helper'
@@ -60,7 +66,9 @@ export async function action({ request, params, context }: ActionArgs) {
 
     if (intent === 'multiple') {
       await upsertCategoryEntries({ id, request, context })
-      return json(null)
+
+      const pathname = new URL(request.url).pathname
+      return redirect(pathname)
     }
   }
 
@@ -102,7 +110,7 @@ export default function CategoryMainPage() {
 
 function Category() {
   const { category } = useLoaderData<typeof loader>()
-  const fetcher = useFetcher()
+  const transition = useTransition()
   const { data } = useMatchesDataForceSchema({
     id: 'routes/$category',
     schema: z.object({
@@ -125,9 +133,9 @@ function Category() {
   const len = data.categories.find((c) => c.id === category.id)?.entries
 
   const disabledComplete =
-    fetcher.state === 'submitting' || len?.done === len?.total
+    transition.state === 'submitting' || len?.done === len?.total
 
-  const { pathname } = useLocation()
+  const { pathname, key } = useLocation()
 
   return (
     <div className="rounded-md bg-gray-3 py-2">
@@ -135,7 +143,7 @@ function Category() {
         <h3 className="text-lg font-medium leading-6 text-primary-11">
           {title}
         </h3>
-        <fetcher.Form method="post" action={`${pathname}?index`} replace>
+        <Form method="post" action={`${pathname}?index`} replace>
           <input type="hidden" name="intent" value="multiple" />
           <Button
             type="submit"
@@ -144,9 +152,9 @@ function Category() {
           >
             Set as complete
           </Button>
-        </fetcher.Form>
+        </Form>
       </div>
-      <div className="mt-4 space-y-1">
+      <div className="mt-4 space-y-1" key={key}>
         {category.entries.map((entry) => (
           <div
             key={entry.id}
@@ -229,7 +237,6 @@ function AchievementInput({
 
   return (
     <fetcher.Form
-      key={useLocation().key}
       className={clsx(
         extraPadding && 'py-2',
         'flex items-center justify-between gap-12'
