@@ -33,9 +33,7 @@ export async function action({ request, context }: ActionArgs) {
     SearchParamsSchema
   )
 
-  const supabaseAnonKey = context.SUPABASE_ANON_KEY
-  invariant(supabaseAnonKey, 'Supabase Anon Key is not defined')
-  const supabase = getClient(supabaseAnonKey)
+  const supabase = getClient(context)
 
   const userSession = z
     .object({

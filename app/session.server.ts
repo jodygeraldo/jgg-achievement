@@ -1,6 +1,5 @@
 import type { AppLoadContext } from '@remix-run/cloudflare'
 import { createCookieSessionStorage, redirect } from '@remix-run/cloudflare'
-import invariant from 'tiny-invariant'
 import { getClient } from './supabase.server'
 import { DEFAULT_REDIRECT } from './utils'
 
@@ -56,9 +55,7 @@ export async function initSupabaseAuth(
   const session = await getSession(request)
   const accessToken = session.get(USER_ACCESS_TOKEN)
 
-  const supabaseKey = context.SUPABASE_SERVICE_ROLE
-  invariant(supabaseKey)
-  const supabase = getClient(supabaseKey)
+  const supabase = getClient(context)
 
   supabase.auth.setAuth(accessToken)
 

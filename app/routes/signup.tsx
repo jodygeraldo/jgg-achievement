@@ -13,7 +13,6 @@ import {
   useTransition,
 } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
-import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
 import { createUserSession, hasSessionActive } from '~/session.server'
@@ -60,9 +59,7 @@ export async function action({ request, context }: ActionArgs) {
 
   const { email, password, remember, redirectTo } = submission.data
 
-  const supabaseAnonKey = context.SUPABASE_ANON_KEY
-  invariant(supabaseAnonKey, 'Supabase Anon Key is not defined')
-  const supabase = getClient(supabaseAnonKey)
+  const supabase = getClient(context)
 
   const { error, session } = await supabase.auth.signUp({
     email,

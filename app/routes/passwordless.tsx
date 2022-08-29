@@ -15,7 +15,6 @@ import {
   useTransition,
 } from '@remix-run/react'
 import { useEffect, useRef, useState } from 'react'
-import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button, ButtonLink } from '~/components/Button'
 import { hasSessionActive } from '~/session.server'
@@ -50,9 +49,7 @@ export async function action({ request, context }: ActionArgs) {
 
   const { email, remember, redirectTo } = submission.data
 
-  const supabaseAnonKey = context.SUPABASE_ANON_KEY
-  invariant(supabaseAnonKey, 'Supabase Anon Key is not defined')
-  const supabase = getClient(supabaseAnonKey)
+  const supabase = getClient(context)
 
   const queryParamsOption: { redirectTo: string; remember?: string } = {
     redirectTo,
