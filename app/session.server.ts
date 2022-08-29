@@ -81,7 +81,7 @@ export async function createUserSession({
 }) {
   const expiresIn = parseInt(userSession.expiresIn)
   const session = await getSession(request)
-  const expiresAt = new Date().getTime() + expiresIn
+  const expiresAt = new Date().getTime() + expiresIn * 1000
 
   session.set(USER_EMAIL, email)
   session.set(USER_ACCESS_TOKEN, userSession.accessToken)
