@@ -9,6 +9,7 @@ import { useFetcher, useLoaderData, useLocation } from '@remix-run/react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { getFormDataOrFail } from 'remix-params-helper'
+import { useHydrated } from 'remix-utils'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
@@ -83,6 +84,23 @@ export async function loader({ request, params, context }: LoaderArgs) {
 }
 
 export default function CategoryMainPage() {
+  const hydrated = useHydrated()
+  if (hydrated) {
+    return (
+      <ScrollArea>
+        <Category />
+      </ScrollArea>
+    )
+  }
+
+  return (
+    <div className="h-[calc(100vh-10rem)] min-w-full overflow-y-auto rounded-md [box-shadow:0_2px_10px_var(--blackA7)]">
+      <Category />
+    </div>
+  )
+}
+
+function Category() {
   const { category } = useLoaderData<typeof loader>()
   const fetcher = useFetcher()
   const { data } = useMatchesDataForceSchema({
@@ -112,70 +130,68 @@ export default function CategoryMainPage() {
   const { pathname } = useLocation()
 
   return (
-    <ScrollArea>
-      <div className="rounded-md bg-gray-3 py-2">
-        <div className="flex items-center justify-between px-4 py-2 sm:px-6">
-          <h3 className="text-lg font-medium leading-6 text-primary-11">
-            {title}
-          </h3>
-          <fetcher.Form method="post" action={`${pathname}?index`} replace>
-            <input type="hidden" name="intent" value="multiple" />
-            <Button
-              type="submit"
-              disabled={disabledComplete}
-              parentBgColorStep={3}
-            >
-              Set as complete
-            </Button>
-          </fetcher.Form>
-        </div>
-        <div className="mt-4 space-y-1">
-          {category.entries.map((entry) => (
-            <div
-              key={entry.id}
-              className="px-4 py-2 transition-colors hover:bg-gray-4 sm:px-6"
-            >
-              <div className="flex items-center gap-2">
-                <h4 className="font-medium leading-6 text-primary-11">
-                  {entry.title}
-                </h4>
-                <span className="rounded-md bg-gray-2 px-2 py-1 text-xs font-medium text-gray-11">
-                  {entry.version}
-                </span>
-                {entry.commission && (
-                  <span className="rounded-md bg-gray-2 px-2 py-1 text-xs font-medium uppercase text-gray-11">
-                    Commission
-                  </span>
-                )}
-                {entry.requirements && <Popover content={entry.requirements} />}
-              </div>
-              {'description' in entry ? (
-                <AchievementInput
-                  key={entry.id}
-                  id={entry.id}
-                  description={entry.description}
-                  dbId={entry.dbId}
-                  defaultChecked={entry.complete}
-                />
-              ) : (
-                <div>
-                  {entry.steps.map((step) => (
-                    <AchievementInput
-                      key={step.id}
-                      id={step.id}
-                      description={step.description}
-                      dbId={step.dbId}
-                      defaultChecked={step.complete}
-                      extraPadding
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+    <div className="rounded-md bg-gray-3 py-2">
+      <div className="flex items-center justify-between px-4 py-2 sm:px-6">
+        <h3 className="text-lg font-medium leading-6 text-primary-11">
+          {title}
+        </h3>
+        <fetcher.Form method="post" action={`${pathname}?index`} replace>
+          <input type="hidden" name="intent" value="multiple" />
+          <Button
+            type="submit"
+            disabled={disabledComplete}
+            parentBgColorStep={3}
+          >
+            Set as complete
+          </Button>
+        </fetcher.Form>
       </div>
-    </ScrollArea>
+      <div className="mt-4 space-y-1">
+        {category.entries.map((entry) => (
+          <div
+            key={entry.id}
+            className="px-4 py-2 transition-colors hover:bg-gray-4 sm:px-6"
+          >
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium leading-6 text-primary-11">
+                {entry.title}
+              </h4>
+              <span className="rounded-md bg-gray-2 px-2 py-1 text-xs font-medium text-gray-11">
+                {entry.version}
+              </span>
+              {entry.commission && (
+                <span className="rounded-md bg-gray-2 px-2 py-1 text-xs font-medium uppercase text-gray-11">
+                  Commission
+                </span>
+              )}
+              {entry.requirements && <Popover content={entry.requirements} />}
+            </div>
+            {'description' in entry ? (
+              <AchievementInput
+                key={entry.id}
+                id={entry.id}
+                description={entry.description}
+                dbId={entry.dbId}
+                defaultChecked={entry.complete}
+              />
+            ) : (
+              <div>
+                {entry.steps.map((step) => (
+                  <AchievementInput
+                    key={step.id}
+                    id={step.id}
+                    description={step.description}
+                    dbId={step.dbId}
+                    defaultChecked={step.complete}
+                    extraPadding
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -269,6 +285,7 @@ function Checkbox({
 }) {
   return (
     <CheckboxPrimitive.Root
+      aria-label="checkbox"
       id={id}
       defaultChecked={defaultChecked}
       name="complete"

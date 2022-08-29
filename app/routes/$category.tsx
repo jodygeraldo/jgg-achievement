@@ -4,6 +4,7 @@ import { json } from '@remix-run/cloudflare'
 import { Form, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import clsx from 'clsx'
 import * as React from 'react'
+import { useHydrated } from 'remix-utils'
 import { Button, ButtonLink } from '~/components/Button'
 import Image from '~/components/Image'
 import { checkSession, hasSessionActive } from '~/session.server'
@@ -68,16 +69,25 @@ export default function CategoryLayout() {
 
 function NavigationList() {
   const { data } = useLoaderData<typeof loader>()
+  const hydrated = useHydrated()
 
   return (
     <nav aria-label="Sidebar">
-      <ScrollArea>
-        <div className="space-y-1">
+      {hydrated ? (
+        <ScrollArea>
+          <div className="space-y-1">
+            {data.categories.map((category) => (
+              <NavigationItem key={category.title} {...category} />
+            ))}
+          </div>
+        </ScrollArea>
+      ) : (
+        <div className="h-[calc(100vh-10rem)] max-w-xs space-y-1 overflow-y-auto rounded-md [box-shadow:0_2px_10px_var(--blackA7)]">
           {data.categories.map((category) => (
             <NavigationItem key={category.title} {...category} />
           ))}
         </div>
-      </ScrollArea>
+      )}
     </nav>
   )
 }
