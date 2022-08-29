@@ -7,16 +7,24 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import { useFetcher, useLoaderData, useLocation } from '@remix-run/react'
 import clsx from 'clsx'
+import { useEffect, useState } from 'react'
 import { getFormDataOrFail } from 'remix-params-helper'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
-import { initSupabaseAuth } from '~/session.server'
+import {
+  getUserCategoryEntriesById,
+  upsertCategoryEntries,
+  upsertCategoryEntry,
+} from '~/models/category.server'
+import { hasSessionActive } from '~/session.server'
 import { useMatchesDataForceSchema } from '~/utils'
 import { getCategoryEntries } from '~/utils/category.server'
 
 const FormDataSchema = z.object({
-  achId: z.string(),
+  intent: z.enum(['multiple', 'single']),
+  dbId: z.string().optional(),
+  achId: z.string().optional(),
   complete: z.string().optional(),
 })
 
@@ -25,30 +33,52 @@ export async function action({ request, params, context }: ActionArgs) {
   invariant(category, 'Category param is not defined')
   const id = category.split('-').at(-1)!
 
-  const { achId, complete } = await getFormDataOrFail(request, FormDataSchema)
+  const { intent, dbId, achId, complete } = await getFormDataOrFail(
+    request,
+    FormDataSchema
+  )
 
-  const supabase = await initSupabaseAuth(request, context)
-  const { error } = await supabase
-    .from(id)
-    .upsert(
-      { ach_id: achId, complete: complete ? true : false },
-      { returning: 'minimal' }
-    )
+  const isSessionActive = await hasSessionActive(request)
 
-  if (error) {
-    throw json({ message: error.message }, 500)
+  if (isSessionActive) {
+    if (intent === 'single') {
+      invariant(achId, 'achId is not defined on single submit')
+
+      await upsertCategoryEntry({
+        id,
+        data: {
+          id: dbId,
+          ach_id: achId,
+          complete: complete === 'on' ? true : false,
+        },
+        request,
+        context,
+      })
+      return json(null)
+    }
+
+    if (intent === 'multiple') {
+      await upsertCategoryEntries({ id, request, context })
+      return json(null)
+    }
   }
+
+  // TODO: save data in cookie if user not logged in
 
   return json(null)
 }
 
-export async function loader({ params, context }: LoaderArgs) {
+export async function loader({ request, params, context }: LoaderArgs) {
   const { category } = params
   invariant(category, 'Category param is not defined')
   const id = category.split('-').at(-1)!
 
+  const data = await getUserCategoryEntriesById({ id, request, context })
+
+  // TODO: get data from cookie if user not logged in
+
   return json({
-    category: getCategoryEntries(id),
+    category: getCategoryEntries({ id, data }),
   })
 }
 
@@ -79,6 +109,8 @@ export default function CategoryMainPage() {
   const disabledComplete =
     fetcher.state === 'submitting' || len?.done === len?.total
 
+  const { pathname } = useLocation()
+
   return (
     <ScrollArea>
       <div className="rounded-md bg-gray-3 py-2">
@@ -86,12 +118,10 @@ export default function CategoryMainPage() {
           <h3 className="text-lg font-medium leading-6 text-primary-11">
             {title}
           </h3>
-          <fetcher.Form method="post">
-            <input type="hidden" name="complete" value="true" />
+          <fetcher.Form method="post" action={`${pathname}?index`} replace>
+            <input type="hidden" name="intent" value="multiple" />
             <Button
               type="submit"
-              name="id"
-              value={category.id}
               disabled={disabledComplete}
               parentBgColorStep={3}
             >
@@ -103,7 +133,7 @@ export default function CategoryMainPage() {
           {category.entries.map((entry) => (
             <div
               key={entry.id}
-              className="rounded-md px-4 py-2 transition-colors hover:bg-gray-4 sm:px-6"
+              className="px-4 py-2 transition-colors hover:bg-gray-4 sm:px-6"
             >
               <div className="flex items-center gap-2">
                 <h4 className="font-medium leading-6 text-primary-11">
@@ -124,6 +154,8 @@ export default function CategoryMainPage() {
                   key={entry.id}
                   id={entry.id}
                   description={entry.description}
+                  dbId={entry.dbId}
+                  defaultChecked={entry.complete}
                 />
               ) : (
                 <div>
@@ -132,6 +164,8 @@ export default function CategoryMainPage() {
                       key={step.id}
                       id={step.id}
                       description={step.description}
+                      dbId={step.dbId}
+                      defaultChecked={step.complete}
                       extraPadding
                     />
                   ))}
@@ -148,14 +182,19 @@ export default function CategoryMainPage() {
 function AchievementInput({
   id,
   description,
+  dbId,
+  defaultChecked,
   extraPadding,
 }: {
   id: string
   description: string
+  dbId?: string
+  defaultChecked?: boolean
   extraPadding?: boolean
 }) {
   const fetcher = useFetcher()
   const { pathname } = useLocation()
+  const [checked, setChecked] = useState(defaultChecked)
 
   function handleCheckChange(e: React.FormEvent<HTMLFormElement>) {
     fetcher.submit(new FormData(e.currentTarget), {
@@ -165,23 +204,35 @@ function AchievementInput({
     })
   }
 
+  useEffect(() => {
+    if (fetcher.submission) {
+      const checked = fetcher.submission?.formData.get('complete') === 'on'
+      setChecked(checked)
+    }
+  }, [fetcher.submission])
+
   return (
     <fetcher.Form
-      key={id}
+      key={useLocation().key}
       className={clsx(
         extraPadding && 'py-2',
         'flex items-center justify-between gap-12'
       )}
       onChange={(e) => handleCheckChange(e)}
     >
+      <input type="hidden" name="intent" value="single" />
+      <input type="hidden" name="dbId" value={dbId} />
       <input type="hidden" name="achId" value={id} />
       <LabelPrimitive.Root
         htmlFor={id}
-        className="mt-1 max-w-prose text-sm text-gray-11"
+        className={clsx(
+          checked && 'line-through decoration-primary-12',
+          'mt-1 max-w-prose text-sm text-gray-11'
+        )}
       >
         {description}
       </LabelPrimitive.Root>
-      <Checkbox id={id} />
+      <Checkbox id={id} defaultChecked={checked} />
     </fetcher.Form>
   )
 }
@@ -209,12 +260,18 @@ function Popover({ content }: { content: string }) {
   )
 }
 
-function Checkbox({ id }: { id: string }) {
+function Checkbox({
+  id,
+  defaultChecked,
+}: {
+  id: string
+  defaultChecked?: boolean
+}) {
   return (
     <CheckboxPrimitive.Root
       id={id}
-      name={id}
-      defaultValue="on"
+      defaultChecked={defaultChecked}
+      name="complete"
       className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
     >
       <CheckboxPrimitive.Indicator className="text-primary-11">

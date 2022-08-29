@@ -182,11 +182,20 @@ type BaseEntry = {
 type Entry = {
   description: string
   steps?: undefined
+  dbId?: string
+  complete?: boolean
 } & BaseEntry
 
 type EntryWithStep = {
   description?: undefined
-  steps: { id: string; description: string }[]
+  steps: {
+    id: string
+    description: string
+    dbId?: string
+    complete?: boolean
+  }[]
+  dbId?: undefined
+  complete?: undefined
 } & BaseEntry
 
 type CategoryEntries = {
