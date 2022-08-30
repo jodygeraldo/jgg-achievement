@@ -1,3 +1,5 @@
+import type { LoaderArgs } from '@remix-run/cloudflare'
+import { json } from '@remix-run/cloudflare'
 import {
   Links,
   LiveReload,
@@ -11,6 +13,7 @@ import {
 import NProgress from 'nprogress'
 import { useEffect, useMemo } from 'react'
 import tailwindStylesUrl from '~/tailwind.css'
+import { hasSessionActive } from './session.server'
 
 NProgress.configure({ showSpinner: false })
 
@@ -35,6 +38,12 @@ export function meta() {
     description: 'JGG Achievement is Genshin Impact achievement tracker.',
     keywords: 'Genshin Impact,achievement,tracker',
   }
+}
+
+export async function loader({ request }: LoaderArgs) {
+  return json({
+    isSessionActive: await hasSessionActive(request),
+  })
 }
 
 export default function App() {

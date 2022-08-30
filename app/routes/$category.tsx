@@ -8,7 +8,8 @@ import { useHydrated } from 'remix-utils'
 import { Button, ButtonLink } from '~/components/Button'
 import Image from '~/components/Image'
 import { getCompleteCount } from '~/models/category.server'
-import { checkSession, hasSessionActive } from '~/session.server'
+import { checkSession } from '~/session.server'
+import { useRootData } from '~/utils'
 import { getCategories } from '~/utils/category.server'
 
 export async function loader({ request, context }: LoaderArgs) {
@@ -16,12 +17,12 @@ export async function loader({ request, context }: LoaderArgs) {
 
   return json({
     data: getCategories(await getCompleteCount({ request, context })),
-    isSessionActive: await hasSessionActive(request),
   })
 }
 
 export default function CategoryLayout() {
-  const { data, isSessionActive } = useLoaderData<typeof loader>()
+  const { data } = useLoaderData<typeof loader>()
+  const { isSessionActive } = useRootData()
 
   const percentage = (data.entries.done / data.entries.total) * 100
 
@@ -40,14 +41,21 @@ export default function CategoryLayout() {
               'mt-2 flex items-center gap-0.5 tabular-nums'
             )}
           >
-            <span>{data.entries.done}</span>/<span>{data.entries.total}</span>
-            &nbsp;&bull;&nbsp;
-            <span>
-              {percentage.toString().includes('.')
-                ? percentage.toFixed(2)
-                : percentage}
-              %
-            </span>
+            {isSessionActive ? (
+              <>
+                <span>{data.entries.done}</span>/
+                <span>{data.entries.total}</span>
+                &nbsp;&bull;&nbsp;
+                <span>
+                  {percentage.toString().includes('.')
+                    ? percentage.toFixed(2)
+                    : percentage}
+                  %
+                </span>
+              </>
+            ) : (
+              <span>Sign in to save your data</span>
+            )}
           </p>
         </div>
 
@@ -58,8 +66,17 @@ export default function CategoryLayout() {
             </Button>
           </Form>
         ) : (
-          <ButtonLink to="/login" prefetch="intent" parentBgColorStep={2}>
+          <ButtonLink
+            to="/login"
+            prefetch="intent"
+            parentBgColorStep={2}
+            extendClass="relative"
+          >
             Sign in
+            <span className="absolute -top-2 -left-2 flex h-4 w-4">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-8 opacity-75" />
+              <span className="relative inline-flex h-4 w-4 rounded-full bg-primary-7" />
+            </span>
           </ButtonLink>
         )}
       </div>
