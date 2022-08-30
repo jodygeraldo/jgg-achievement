@@ -83,14 +83,10 @@ export async function upsertCategoryEntry({
   context: AppLoadContext
 }) {
   const supabase = await initSupabaseAuth(request, context)
-  const { error, status } = await supabase
-    .from<definitions['wotw']>(id)
-    .upsert(data, {
-      returning: 'minimal',
-      onConflict: 'id',
-    })
-
-  console.log(error)
+  const { status } = await supabase.from<definitions['wotw']>(id).upsert(data, {
+    returning: 'minimal',
+    onConflict: 'id',
+  })
 
   if (status === 500) {
     throw new Error('Something went wrong')
