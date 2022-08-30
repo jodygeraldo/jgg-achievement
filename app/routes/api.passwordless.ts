@@ -53,7 +53,7 @@ export async function action({ request, context }: ActionArgs) {
 
   return createUserSession({
     request,
-    email: user.email,
+    userId: user.id,
     userSession,
     remember,
     redirectTo,

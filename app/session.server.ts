@@ -14,7 +14,7 @@ export const sessionStorage = createCookieSessionStorage({
   },
 })
 
-const USER_EMAIL = 'userEmail'
+const USER_ID = 'userId'
 const USER_ACCESS_TOKEN = 'accessToken'
 const USER_REFRESH_TOKEN = 'refreshToken'
 const USER_EXPIRES_AT = 'expiresAt'
@@ -24,9 +24,9 @@ export async function getSession(request: Request) {
   return sessionStorage.getSession(cookie)
 }
 
-export async function getUserEmail(request: Request) {
+export async function getUserId(request: Request) {
   const session = await getSession(request)
-  return session.has(USER_EMAIL)
+  return session.has(USER_ID)
 }
 
 export async function hasSessionActive(request: Request) {
@@ -64,13 +64,13 @@ export async function initSupabaseAuth(
 
 export async function createUserSession({
   request,
-  email,
+  userId,
   userSession,
   remember,
   redirectTo,
 }: {
   request: Request
-  email: string
+  userId: string
   userSession: {
     accessToken: string
     refreshToken: string
@@ -83,7 +83,7 @@ export async function createUserSession({
   const session = await getSession(request)
   const expiresAt = new Date().getTime() + expiresIn * 1000
 
-  session.set(USER_EMAIL, email)
+  session.set(USER_ID, userId)
   session.set(USER_ACCESS_TOKEN, userSession.accessToken)
   session.set(USER_REFRESH_TOKEN, userSession.refreshToken)
   session.set(USER_EXPIRES_AT, expiresAt)

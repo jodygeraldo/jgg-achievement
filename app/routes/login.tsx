@@ -13,6 +13,7 @@ import {
   useTransition,
 } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
+import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button, ButtonLink } from '~/components/Button'
 import { createUserSession, hasSessionActive } from '~/session.server'
@@ -53,7 +54,7 @@ export async function action({ request, context }: ActionArgs) {
 
   const supabase = getClient(context)
 
-  const { error, session } = await supabase.auth.signIn({
+  const { user, error, session } = await supabase.auth.signIn({
     email,
     password,
   })
@@ -75,9 +76,11 @@ export async function action({ request, context }: ActionArgs) {
     return modifiedSubmissionForm
   }
 
+  invariant(user, 'user not defined on login no error')
+
   return createUserSession({
     request,
-    email,
+    userId: user.id,
     userSession: {
       accessToken: session?.access_token ?? '',
       refreshToken: session?.refresh_token ?? '',
