@@ -19,6 +19,7 @@ declare module '@remix-run/cloudflare' {
     SUPABASE_URL?: string
     SUPABASE_ANON_KEY?: string
     SUPABASE_SERVICE_ROLE?: string
+    KV_CACHE?: KVNamespace
   }
 }
 

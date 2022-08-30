@@ -26,7 +26,7 @@ export async function getSession(request: Request) {
 
 export async function getUserId(request: Request) {
   const session = await getSession(request)
-  return session.has(USER_ID)
+  return session.get(USER_ID)
 }
 
 export async function hasSessionActive(request: Request) {
