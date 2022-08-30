@@ -191,6 +191,7 @@ function Category() {
                     description={step.description}
                     dbId={step.dbId}
                     defaultChecked={step.complete}
+                    disabled={step.disabled}
                     extraPadding
                   />
                 ))}
@@ -208,12 +209,14 @@ function AchievementInput({
   description,
   dbId,
   defaultChecked,
+  disabled,
   extraPadding,
 }: {
   id: string
   description: string
   dbId?: string
   defaultChecked?: boolean
+  disabled?: boolean
   extraPadding?: boolean
 }) {
   const fetcher = useFetcher()
@@ -255,7 +258,7 @@ function AchievementInput({
       >
         {description}
       </LabelPrimitive.Root>
-      <Checkbox id={id} defaultChecked={checked} />
+      <Checkbox id={id} defaultChecked={checked} disabled={disabled} />
     </fetcher.Form>
   )
 }
@@ -286,15 +289,18 @@ function Popover({ content }: { content: string }) {
 function Checkbox({
   id,
   defaultChecked,
+  disabled,
 }: {
   id: string
   defaultChecked?: boolean
+  disabled?: boolean
 }) {
   return (
     <CheckboxPrimitive.Root
       aria-label="checkbox"
       id={id}
       defaultChecked={defaultChecked}
+      disabled={disabled}
       name="complete"
       className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
     >

@@ -191,6 +191,7 @@ type EntryWithStep = {
   steps: {
     id: string
     description: string
+    disabled?: boolean
     dbId?: string
     complete?: boolean
   }[]

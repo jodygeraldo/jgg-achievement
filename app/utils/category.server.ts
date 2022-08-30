@@ -84,15 +84,32 @@ export function getCategoryEntries({
 
   const updatedEntries: typeof entries = entries.map((entry) => {
     if (entry.steps) {
-      const steps = entry.steps.map((step) => {
+      const steps: typeof entry.steps = []
+      entry.steps.forEach((step, idx) => {
         const userEntry = data.find((ue) => ue.ach_id === step.id)
-        if (!userEntry) return step
-        return {
-          ...step,
-          dbId: userEntry.id,
-          complete: userEntry.complete,
+        if (!userEntry) {
+          steps.push({
+            ...step,
+            disabled:
+              idx === 0 ? false : steps[idx - 1].complete ? false : true,
+          })
+        } else {
+          steps.push({
+            ...step,
+            dbId: userEntry.id,
+            complete: userEntry.complete,
+            disabled:
+              idx === 0 ? false : steps[idx - 1].complete ? false : true,
+          })
         }
       })
+
+      if (steps[2].complete) {
+        steps[0].disabled = true
+        steps[1].disabled = true
+      } else if (steps[1].complete) {
+        steps[0].disabled = true
+      }
 
       return {
         ...entry,
