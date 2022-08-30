@@ -3,6 +3,7 @@ import { CheckIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
+import * as SeparatorPrimitive from '@radix-ui/react-separator'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -154,6 +155,9 @@ function Category() {
           </Button>
         </Form>
       </div>
+
+      <SeparatorPrimitive.Root className="my-2 h-px w-full bg-primary-6" />
+
       <div className="mt-4 space-y-1" key={key}>
         {category.entries.map((entry) => (
           <div
