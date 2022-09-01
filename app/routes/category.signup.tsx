@@ -136,24 +136,24 @@ export default function SignupPage() {
   const busy = useTransition().state === 'submitting'
 
   return (
-    <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-full items-center justify-center lg:min-h-fit">
       <div className="w-full max-w-md space-y-8">
         <div>
           {/* <Logo className="mx-auto h-12 w-auto" /> */}
-          <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-12">
+          <h1 className="text-center text-3xl font-extrabold text-gray-12">
             Sign up new account
           </h1>
           <p className="mt-2 text-center text-sm text-gray-11">
             Or{' '}
             <Link
-              to="/login"
+              to="/category/login"
               className="font-medium text-primary-9 hover:text-primary-10"
             >
               login with existing account
             </Link>
           </p>
         </div>
-        <Form method="post" className="mt-8 space-y-6" {...formProps}>
+        <Form method="post" replace className="mt-8 space-y-6" {...formProps}>
           <fieldset>
             <div className="-space-y-px rounded-md shadow-sm">
               <div>
@@ -249,7 +249,7 @@ export default function SignupPage() {
           <Button
             type="submit"
             parentBgColorStep={2}
-            extendClass="w-full"
+            className="w-full"
             disabled={busy}
           >
             {busy ? 'Creating your account...' : 'Sign up'}

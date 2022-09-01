@@ -13,7 +13,7 @@ import {
 import NProgress from 'nprogress'
 import { useEffect, useMemo } from 'react'
 import tailwindStylesUrl from '~/tailwind.css'
-import { hasSessionActive } from './session.server'
+import { checkSession, hasSessionActive } from './session.server'
 
 NProgress.configure({ showSpinner: false })
 
@@ -41,6 +41,8 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderArgs) {
+  await checkSession(request)
+
   return json({
     isSessionActive: await hasSessionActive(request),
   })

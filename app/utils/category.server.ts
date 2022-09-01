@@ -23,24 +23,54 @@ export function getCategories({
     )
     if (!entries) throw new Error('Category id is not defined')
     const { count } = categoriesData.find((cd) => cd.id === entries.id)!
+
+    const completion = {
+      done: count ? count : 0,
+      total: entries.entries.reduce(
+        (prev, curr) => ('description' in curr ? prev + 1 : prev + 3),
+        0
+      ),
+    }
+
+    const completionPercentage = (completion.done / completion.total) * 100
+    const formattedCompletionPercentage = `${
+      completionPercentage.toString().includes('.')
+        ? completionPercentage.toFixed(2)
+        : completionPercentage
+    }%`
+
     return {
       ...category,
-      entries: {
-        done: count ? count : 0,
-        total: entries.entries.reduce(
-          (prev, curr) => ('description' in curr ? prev + 1 : prev + 3),
-          0
-        ),
+      completion: {
+        ...completion,
+        percentage: formattedCompletionPercentage,
       },
     }
   })
+
+  const completion = {
+    done: totalCount,
+    total: updatedCategories.reduce(
+      (prev, curr) => prev + curr.completion.total,
+      0
+    ),
+  }
+
+  const completionPercentage = (completion.done / completion.total) * 100
+  const formattedCompletionPercentage = `${
+    completionPercentage.toString().includes('.')
+      ? completionPercentage.toFixed(2)
+      : completionPercentage
+  }%`
+
   return {
-    entries: {
+    completion: {
       done: totalCount,
       total: updatedCategories.reduce(
-        (prev, curr) => prev + curr.entries.total,
+        (prev, curr) => prev + curr.completion.total,
         0
       ),
+      percentage: formattedCompletionPercentage,
     },
     categories: updatedCategories,
   }
@@ -65,9 +95,11 @@ export function getCategoryEntriesId(id: string) {
 export function getCategoryEntries({
   id,
   data,
+  showAll,
 }: {
   id: string
   data: Omit<definitions['wotw'], 'user_id'>[] | null
+  showAll: boolean
 }) {
   const { id: categoryId, entries } = getCategoryDataById(id)
   const title = categories.find((category) => category.id === categoryId)?.title
@@ -126,9 +158,17 @@ export function getCategoryEntries({
     }
   })
 
+  const filteredEntries = showAll
+    ? updatedEntries
+    : updatedEntries.filter((entry) => {
+        if (entry.steps)
+          return !entry.steps.every((step) => step.complete === true)
+        return !entry.complete
+      })
+
   return {
     id,
     title,
-    entries: updatedEntries,
+    entries: filteredEntries,
   }
 }

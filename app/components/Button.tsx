@@ -7,7 +7,7 @@ type Variant = 'primary' | 'secondary'
 
 type Props = {
   variant?: 'primary' | 'secondary'
-  extendClass?: string
+  className?: string
   parentBgColorStep: 1 | 2 | 3
 }
 
@@ -30,17 +30,17 @@ const ParentBgColorStep: Record<Props['parentBgColorStep'], string> = {
 function Button({
   parentBgColorStep,
   variant = 'primary',
-  extendClass,
+  className,
   children,
   ...props
-}: Props & ComponentPropsWithoutRef<'button'>) {
+}: Props & Omit<ComponentPropsWithoutRef<'button'>, keyof Props>) {
   return (
     <button
       className={clsx(
         'inline-flex items-center justify-center rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-8 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-primary-6',
         ButtonVariantStyles[variant],
         ParentBgColorStep[parentBgColorStep],
-        extendClass
+        className
       )}
       {...props}
     >
@@ -52,17 +52,17 @@ function Button({
 function ButtonLink({
   parentBgColorStep,
   variant = 'primary',
-  extendClass,
+  className,
   children,
   ...props
-}: Props & RemixLinkProps) {
+}: Props & Omit<RemixLinkProps, keyof Props>) {
   return (
     <Link
       className={clsx(
         'inline-flex items-center justify-center rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-8 focus:ring-offset-2',
         ButtonLinkVariantStyles[variant],
         ParentBgColorStep[parentBgColorStep],
-        extendClass
+        className
       )}
       {...props}
     >

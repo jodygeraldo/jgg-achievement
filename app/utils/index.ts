@@ -1,22 +1,23 @@
+import type { SerializeFrom } from '@remix-run/cloudflare'
 import { useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
-import { z } from 'zod'
+import type { z } from 'zod'
+import type { loader as rootLoader } from '~/root'
 
 /**
  * This base hook is used in other hooks to quickly search for specific data
  * across all loader data using useMatches.
  * @param {string} id The route id
- * @returns {JSON|undefined} The router data or undefined if not found
+ * @returns {JSON} The router data or undefined if not found
  */
-export function useMatchesData(
-  id: string
-): Record<string, unknown> | undefined {
+export function useMatchesData<T>(id: string): SerializeFrom<T> {
+  type DataType = SerializeFrom<T>
   const matchingRoutes = useMatches()
   const route = useMemo(
     () => matchingRoutes.find((route) => route.id === id),
     [matchingRoutes, id]
   )
-  return route?.data
+  return route?.data as DataType
 }
 
 export function useMatchesDataForceSchema<T extends z.ZodTypeAny>({
@@ -34,12 +35,8 @@ export function useMatchesDataForceSchema<T extends z.ZodTypeAny>({
   return result as SchemaType
 }
 
-export const DEFAULT_REDIRECT = '/wonders-of-the-world-wotw'
-
-const RootDataSchema = z.object({
-  isSessionActive: z.boolean(),
-})
+export const DEFAULT_REDIRECT = '/category/wonders-of-the-world-wotw'
 
 export function useRootData() {
-  return useMatchesDataForceSchema({ id: 'root', schema: RootDataSchema })
+  return useMatchesData<typeof rootLoader>('root')
 }

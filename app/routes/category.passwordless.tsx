@@ -41,6 +41,9 @@ const Credential = resolve(
 )
 
 export async function action({ request, context }: ActionArgs) {
+  const host =
+    request.headers.get('X-Forwarded-Host') ?? request.headers.get('host')
+
   const submission = Credential.parse(await request.formData())
 
   if (submission.state !== 'accepted') {
@@ -51,14 +54,13 @@ export async function action({ request, context }: ActionArgs) {
 
   const supabase = getClient(context)
 
-  const queryParamsOption: { redirectTo: string; remember?: string } = {
-    redirectTo,
-  }
-  if (remember) queryParamsOption.remember = 'on'
+  const url = new URL('/category/passwordless', `http://${host}`)
+  if (remember) url.searchParams.set('redirectTo', redirectTo)
+  if (remember) url.searchParams.set('remember', 'true')
 
   const { error } = await supabase.auth.signIn(
     { email },
-    { queryParams: queryParamsOption }
+    { redirectTo: url.toString() }
   )
 
   if (error) {
@@ -123,8 +125,6 @@ export default function PasswordlessAuthPage() {
   }, [formState])
 
   useEffect(() => {
-    console.log(hash)
-
     if (hash.includes('#')) {
       setShow(true)
     } else {
@@ -159,29 +159,24 @@ export default function PasswordlessAuthPage() {
 
   return (
     <>
-      <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="flex min-h-full items-center justify-center lg:min-h-fit">
         <div className="w-full max-w-md space-y-8">
           <div>
             {/* <Logo className="mx-auto h-12 w-auto" /> */}
-            <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-12">
+            <h1 className="text-center text-3xl font-extrabold text-gray-12">
               Sign in to your account
             </h1>
             <p className="mt-2 text-center text-sm text-gray-11">
               Or{' '}
               <Link
-                to="/signup"
+                to="/category/signup"
                 className="font-medium text-primary-9 hover:text-primary-10"
               >
                 create new account
               </Link>
             </p>
           </div>
-          <Form
-            action="/passwordless"
-            method="post"
-            className="mt-8 space-y-6"
-            {...formProps}
-          >
+          <Form method="post" replace className="mt-8 space-y-6" {...formProps}>
             <fieldset>
               <div className="rounded-md shadow-sm">
                 <label htmlFor="email" className="sr-only">
@@ -236,11 +231,11 @@ export default function PasswordlessAuthPage() {
 
             <div className="sm:flex sm:items-center sm:gap-4">
               <ButtonLink
-                to="/login"
+                to="/category/login"
                 prefetch="intent"
                 parentBgColorStep={2}
                 variant="secondary"
-                extendClass="w-full"
+                className="w-full"
               >
                 Password sign in
               </ButtonLink>
@@ -249,7 +244,7 @@ export default function PasswordlessAuthPage() {
                 id="signup"
                 type="submit"
                 parentBgColorStep={2}
-                extendClass="w-full mt-4 sm:mt-0"
+                className="mt-4 w-full sm:mt-0"
                 disabled={busy}
               >
                 {busy ? 'Sending email...' : 'Send email'}

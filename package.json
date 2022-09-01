@@ -11,7 +11,7 @@
     "predev": "rimraf public/build functions",
     "dev:remix": "remix watch",
     "dev:css": "npm run generate:css -- -w",
-    "dev:wrangler": "cross-env NODE_ENV=development wrangler pages dev ./public --kv KV_CACHE",
+    "dev:wrangler": "cross-env NODE_ENV=development wrangler pages dev --local ./public --kv KV_CACHE",
     "dev": "remix build && run-p \"dev:*\"",
     "start": "cross-env NODE_ENV=production npm run dev:wrangler",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint **/*.{ts,tsx}",
