@@ -58,6 +58,7 @@ export default function CategoryPage() {
               className="flex items-center gap-4"
             >
               <input type="hidden" name="redirectTo" value={pathname} />
+
               <LabelPrimitive.Root
                 htmlFor="showAll"
                 className="mt-1 text-sm text-gray-11"
@@ -66,10 +67,10 @@ export default function CategoryPage() {
               </LabelPrimitive.Root>
               <CheckboxPrimitive.Root
                 type="submit"
-                aria-labelledby="showAll"
+                id="showAll"
                 defaultChecked={showAll}
                 name="showAll"
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8"
               >
                 <CheckboxPrimitive.Indicator className="text-primary-11">
                   <CheckIcon />

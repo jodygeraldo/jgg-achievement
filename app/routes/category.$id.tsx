@@ -1,6 +1,5 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import { CheckIcon, InfoCircledIcon } from '@radix-ui/react-icons'
-import * as LabelPrimitive from '@radix-ui/react-label'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import * as SeparatorPrimitive from '@radix-ui/react-separator'
@@ -14,7 +13,6 @@ import {
   useTransition,
 } from '@remix-run/react'
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
 import { getFormDataOrFail } from 'remix-params-helper'
 import { useHydrated } from 'remix-utils'
 import invariant from 'tiny-invariant'
@@ -215,45 +213,41 @@ function EntryInput({
   extraPadding?: boolean
 }) {
   const fetcher = useFetcher()
-  const { pathname } = useLocation()
-  const [checked, setChecked] = useState(defaultChecked)
-
-  function handleCheckChange(e: React.FormEvent<HTMLFormElement>) {
-    fetcher.submit(new FormData(e.currentTarget), {
-      action: pathname + '?index',
-      method: 'post',
-      replace: true,
-    })
-  }
-
-  useEffect(() => {
-    if (fetcher.submission) {
-      const checked = fetcher.submission?.formData.get('complete') === 'on'
-      setChecked(checked)
-    }
-  }, [fetcher.submission])
 
   return (
     <fetcher.Form
+      method="post"
+      replace
       className={clsx(
         extraPadding && 'py-2',
         'flex items-center justify-between gap-12'
       )}
-      onChange={(e) => handleCheckChange(e)}
     >
       <input type="hidden" name="intent" value="single" />
       <input type="hidden" name="dbId" value={dbId} />
       <input type="hidden" name="achId" value={id} />
-      <LabelPrimitive.Root
-        htmlFor={id}
+
+      <span
+        id={id}
         className={clsx(
-          checked && 'line-through decoration-primary-12',
+          defaultChecked && 'line-through decoration-primary-12',
           'mt-1 max-w-prose text-sm text-gray-11'
         )}
       >
         {description}
-      </LabelPrimitive.Root>
-      <Checkbox id={id} defaultChecked={checked} disabled={disabled} />
+      </span>
+      <CheckboxPrimitive.Root
+        type="submit"
+        aria-labelledby={id}
+        defaultChecked={defaultChecked}
+        disabled={disabled}
+        name="complete"
+        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
+      >
+        <CheckboxPrimitive.Indicator className="text-primary-11">
+          <CheckIcon />
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
     </fetcher.Form>
   )
 }
@@ -278,31 +272,6 @@ function InfoPopover({ content }: { content: string }) {
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
-  )
-}
-
-function Checkbox({
-  id,
-  defaultChecked,
-  disabled,
-}: {
-  id: string
-  defaultChecked?: boolean
-  disabled?: boolean
-}) {
-  return (
-    <CheckboxPrimitive.Root
-      aria-label="checkbox"
-      id={id}
-      defaultChecked={defaultChecked}
-      disabled={disabled}
-      name="complete"
-      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
-    >
-      <CheckboxPrimitive.Indicator className="text-primary-11">
-        <CheckIcon />
-      </CheckboxPrimitive.Indicator>
-    </CheckboxPrimitive.Root>
   )
 }
 
