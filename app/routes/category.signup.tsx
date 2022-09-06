@@ -226,14 +226,17 @@ export default function SignupPage() {
 
             <div className="mt-4 flex items-center">
               <Checkbox
-                aria-labelledby="remember"
+                id="remember"
                 name={remember.config.name}
                 defaultChecked={!!remember.config.defaultValue}
               />
 
-              <span id="remember" className="ml-2 block text-sm text-gray-12">
+              <label
+                htmlFor="remember"
+                className="ml-2 block text-sm text-gray-12"
+              >
                 Remember me
-              </span>
+              </label>
             </div>
           </fieldset>
 
