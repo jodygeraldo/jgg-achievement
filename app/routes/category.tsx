@@ -1,5 +1,4 @@
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import type { LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import {
@@ -10,8 +9,6 @@ import {
   useLocation,
 } from '@remix-run/react'
 import clsx from 'clsx'
-import * as React from 'react'
-import { useHydrated } from 'remix-utils'
 import { Button, ButtonLink } from '~/components/Button'
 import Checkbox from '~/components/Checkbox'
 import Completion from '~/components/Completion'
@@ -143,8 +140,8 @@ function Navigation() {
   const { categories } = data
 
   return (
-    <nav aria-label="Sidebar">
-      <ScrollArea>
+    <nav aria-label="Sidebar" className="sticky top-6">
+      <div className="h-full space-y-1 overflow-y-auto rounded-md [box-shadow:0_2px_10px_var(--blackA7)] lg:h-[calc(100vh-11rem)] lg:max-w-sm">
         {categories.map(({ id, src, title, completion }) => (
           <NavLink
             key={title}
@@ -177,41 +174,7 @@ function Navigation() {
             </div>
           </NavLink>
         ))}
-      </ScrollArea>
+      </div>
     </nav>
   )
-}
-
-function ScrollAreaCustom({ children }: { children: React.ReactNode }) {
-  return (
-    <ScrollAreaPrimitive.Root className="h-[calc(100vh-14rem)] overflow-hidden rounded-md [box-shadow:0_2px_10px_var(--blackA7)] md:h-[calc(100vh-11rem)] lg:max-w-sm">
-      <ScrollAreaPrimitive.Viewport className="h-full w-full [border-radius:inherit]">
-        <div className="space-y-1">{children}</div>
-      </ScrollAreaPrimitive.Viewport>
-      <ScrollAreaPrimitive.Scrollbar
-        orientation="vertical"
-        className="flex touch-none select-none bg-overlay-6 p-0.5 transition-colors ease-out hover:bg-overlay-7 radix-orientation-vertical:w-2"
-      >
-        <ScrollAreaPrimitive.Thumb className="relative flex-1 rounded-lg bg-gray-10 before:absolute before:top-1/2 before:left-1/2 before:h-full before:min-h-[44px] before:w-full before:min-w-[44px] before:-translate-x-1/2 before:-translate-y-1/2" />
-      </ScrollAreaPrimitive.Scrollbar>
-    </ScrollAreaPrimitive.Root>
-  )
-}
-
-function ScrollAreaNative({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="h-[calc(100vh-14rem)] space-y-1 overflow-y-auto rounded-md [box-shadow:0_2px_10px_var(--blackA7)] md:h-[calc(100vh-11rem)] lg:max-w-sm">
-      {children}
-    </div>
-  )
-}
-
-function ScrollArea({ children }: { children: React.ReactNode }) {
-  const hydrated = useHydrated()
-
-  if (hydrated) {
-    return <ScrollAreaCustom>{children}</ScrollAreaCustom>
-  }
-
-  return <ScrollAreaNative>{children}</ScrollAreaNative>
 }

@@ -1,6 +1,5 @@
 import { InfoCircledIcon } from '@radix-ui/react-icons'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -12,7 +11,6 @@ import {
 } from '@remix-run/react'
 import clsx from 'clsx'
 import { getFormDataOrFail } from 'remix-params-helper'
-import { useHydrated } from 'remix-utils'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
@@ -106,7 +104,7 @@ export default function EntriesPage() {
   const { pathname, key } = useLocation()
 
   return (
-    <ScrollArea>
+    <div className="min-w-full rounded-md [box-shadow:0_2px_10px_var(--blackA7)]">
       <div className="rounded-md bg-gray-3 py-2">
         <div className="px-4 py-2 sm:flex sm:items-center sm:justify-between sm:px-6">
           <div className="space-y-1">
@@ -192,7 +190,7 @@ export default function EntriesPage() {
           ))}
         </div>
       </div>
-    </ScrollArea>
+    </div>
   )
 }
 
@@ -268,43 +266,4 @@ function InfoPopover({ content }: { content: string }) {
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   )
-}
-
-function ScrollAreaCustom({ children }: { children: React.ReactNode }) {
-  const { pathname } = useLocation()
-
-  return (
-    <ScrollAreaPrimitive.Root
-      key={pathname}
-      className="h-full max-h-[calc(100vh-14rem)] min-w-full overflow-hidden rounded-md [box-shadow:0_2px_10px_var(--blackA7)] md:max-h-[calc(100vh-11rem)]"
-    >
-      <ScrollAreaPrimitive.Viewport className="h-full w-full [border-radius:inherit]">
-        {children}
-      </ScrollAreaPrimitive.Viewport>
-      <ScrollAreaPrimitive.Scrollbar
-        orientation="vertical"
-        className="flex touch-none select-none bg-overlay-6 p-0.5 transition-colors ease-out hover:bg-overlay-7 radix-orientation-vertical:w-2"
-      >
-        <ScrollAreaPrimitive.Thumb className="relative flex-1 rounded-lg bg-gray-10 before:absolute before:top-1/2 before:left-1/2 before:h-full before:min-h-[44px] before:w-full before:min-w-[44px] before:-translate-x-1/2 before:-translate-y-1/2" />
-      </ScrollAreaPrimitive.Scrollbar>
-    </ScrollAreaPrimitive.Root>
-  )
-}
-
-function ScrollAreaNative({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="h-full max-h-[calc(100vh-14rem)] min-w-full overflow-y-auto rounded-md [box-shadow:0_2px_10px_var(--blackA7)] md:max-h-[calc(100vh-11rem)]">
-      {children}
-    </div>
-  )
-}
-
-function ScrollArea({ children }: { children: React.ReactNode }) {
-  const hydrated = useHydrated()
-
-  if (hydrated) {
-    return <ScrollAreaCustom>{children}</ScrollAreaCustom>
-  }
-
-  return <ScrollAreaNative>{children}</ScrollAreaNative>
 }

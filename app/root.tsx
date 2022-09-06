@@ -75,7 +75,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full overflow-y-hidden bg-gray-2">
+      <body className="h-full bg-gray-2">
         <Outlet />
         <ScrollRestoration />
         <Scripts />

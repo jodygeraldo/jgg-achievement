@@ -24,7 +24,6 @@
     "@radix-ui/react-checkbox": "^1.0.0",
     "@radix-ui/react-icons": "^1.1.1",
     "@radix-ui/react-popover": "^1.0.0",
-    "@radix-ui/react-scroll-area": "^1.0.0",
     "@remix-run/cloudflare": "^1.7.0",
     "@remix-run/cloudflare-pages": "^1.7.0",
     "@remix-run/react": "^1.7.0",
