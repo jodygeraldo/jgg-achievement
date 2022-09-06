@@ -1,6 +1,4 @@
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { ArrowLeftIcon, CheckIcon } from '@radix-ui/react-icons'
-import * as LabelPrimitive from '@radix-ui/react-label'
+import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import type { LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
@@ -15,6 +13,7 @@ import clsx from 'clsx'
 import * as React from 'react'
 import { useHydrated } from 'remix-utils'
 import { Button, ButtonLink } from '~/components/Button'
+import Checkbox from '~/components/Checkbox'
 import Completion from '~/components/Completion'
 import Image from '~/components/Image'
 import { getShowAll } from '~/cookies'
@@ -59,23 +58,16 @@ export default function CategoryPage() {
             >
               <input type="hidden" name="redirectTo" value={pathname} />
 
-              <LabelPrimitive.Root
-                htmlFor="showAll"
-                className="mt-1 text-sm text-gray-11"
-              >
+              <span id="showAll" className="mt-1 text-sm text-gray-11">
                 Show completed achievement
-              </LabelPrimitive.Root>
-              <CheckboxPrimitive.Root
+              </span>
+              <Checkbox
                 type="submit"
-                id="showAll"
+                aria-labelledby="showAll"
                 defaultChecked={showAll}
                 name="showAll"
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8"
-              >
-                <CheckboxPrimitive.Indicator className="text-primary-11">
-                  <CheckIcon />
-                </CheckboxPrimitive.Indicator>
-              </CheckboxPrimitive.Root>
+                size="lg"
+              />
             </Form>
           </div>
         </div>

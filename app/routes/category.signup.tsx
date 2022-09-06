@@ -1,8 +1,5 @@
 import { useFieldset, useForm } from '@conform-to/react'
 import { ifNonEmptyString, resolve } from '@conform-to/zod'
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { CheckIcon } from '@radix-ui/react-icons'
-import * as LabelPrimitive from '@radix-ui/react-label'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -16,6 +13,7 @@ import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
+import Checkbox from '~/components/Checkbox'
 import { createUserSession, hasSessionActive } from '~/session.server'
 import { getClient } from '~/supabase.server'
 import { DEFAULT_REDIRECT } from '~/utils'
@@ -227,22 +225,15 @@ export default function SignupPage() {
             <input type="hidden" name="redirectTo" value={redirectTo} />
 
             <div className="mt-4 flex items-center">
-              <CheckboxPrimitive.Root
-                id="remember"
+              <Checkbox
+                aria-labelledby="remember"
                 name={remember.config.name}
                 defaultChecked={!!remember.config.defaultValue}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
-              >
-                <CheckboxPrimitive.Indicator className="text-primary-11">
-                  <CheckIcon />
-                </CheckboxPrimitive.Indicator>
-              </CheckboxPrimitive.Root>
-              <LabelPrimitive.Root
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-12"
-              >
+              />
+
+              <span id="remember" className="ml-2 block text-sm text-gray-12">
                 Remember me
-              </LabelPrimitive.Root>
+              </span>
             </div>
           </fieldset>
 

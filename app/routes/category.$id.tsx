@@ -1,8 +1,6 @@
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { CheckIcon, InfoCircledIcon } from '@radix-ui/react-icons'
+import { InfoCircledIcon } from '@radix-ui/react-icons'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
-import * as SeparatorPrimitive from '@radix-ui/react-separator'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -18,6 +16,7 @@ import { useHydrated } from 'remix-utils'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { Button } from '~/components/Button'
+import Checkbox from '~/components/Checkbox'
 import Completion from '~/components/Completion'
 import { getShowAll } from '~/cookies'
 import {
@@ -137,7 +136,7 @@ export default function EntriesPage() {
           )}
         </div>
 
-        <SeparatorPrimitive.Root className="my-2 h-px w-full bg-primary-6" />
+        <div className="my-2 h-px w-full bg-primary-6" role="separator" />
 
         <div className="mt-4 mb-2 space-y-1" key={key}>
           {category.entries.length === 0 && (
@@ -236,18 +235,14 @@ function EntryInput({
       >
         {description}
       </span>
-      <CheckboxPrimitive.Root
+      <Checkbox
         type="submit"
+        name="complete"
         aria-labelledby={id}
         defaultChecked={defaultChecked}
         disabled={disabled}
-        name="complete"
-        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
-      >
-        <CheckboxPrimitive.Indicator className="text-primary-11">
-          <CheckIcon />
-        </CheckboxPrimitive.Indicator>
-      </CheckboxPrimitive.Root>
+        size="lg"
+      />
     </fetcher.Form>
   )
 }

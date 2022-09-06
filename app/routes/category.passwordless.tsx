@@ -1,8 +1,6 @@
 import { useFieldset, useForm } from '@conform-to/react'
 import { ifNonEmptyString, resolve } from '@conform-to/zod'
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { CheckIcon, UpdateIcon } from '@radix-ui/react-icons'
-import * as LabelPrimitive from '@radix-ui/react-label'
+import { UpdateIcon } from '@radix-ui/react-icons'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -17,6 +15,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { z } from 'zod'
 import { Button, ButtonLink } from '~/components/Button'
+import Checkbox from '~/components/Checkbox'
 import { hasSessionActive } from '~/session.server'
 import { getClient } from '~/supabase.server'
 import { DEFAULT_REDIRECT } from '~/utils'
@@ -55,7 +54,7 @@ export async function action({ request, context }: ActionArgs) {
   const supabase = getClient(context)
 
   const url = new URL('/category/passwordless', `http://${host}`)
-  if (remember) url.searchParams.set('redirectTo', redirectTo)
+  if (redirectTo) url.searchParams.set('redirectTo', redirectTo)
   if (remember) url.searchParams.set('remember', 'true')
 
   const { error } = await supabase.auth.signIn(
@@ -93,7 +92,7 @@ export default function PasswordlessAuthPage() {
   const [show, setShow] = useState(false)
   const [isValidHash, setIsValidHash] = useState(true)
   const submit = useSubmit()
-  const { hash } = useLocation()
+  const location = useLocation()
 
   const formState = useActionData<typeof action>()
   const formProps = useForm({
@@ -109,10 +108,6 @@ export default function PasswordlessAuthPage() {
     }
   )
 
-  const [rememberState, setRememberState] = useState(
-    !!remember.config.defaultValue
-  )
-
   const [searchParams] = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? DEFAULT_REDIRECT
 
@@ -125,12 +120,12 @@ export default function PasswordlessAuthPage() {
   }, [formState])
 
   useEffect(() => {
-    if (hash.includes('#')) {
+    if (location.hash.includes('access_token=')) {
       setShow(true)
     } else {
       return
     }
-    const session = hash.slice(1).split('&')
+    const session = location.hash.slice(1).split('&')
     const accessToken = session.find((s) => s.startsWith('access_token='))
     const refreshToken = session.find((s) => s.startsWith('refresh_token='))
     const expiresIn = session.find((s) => s.startsWith('expires_in='))
@@ -139,7 +134,7 @@ export default function PasswordlessAuthPage() {
     }
 
     let actionPath = `/api/passwordless?redirectTo=${redirectTo}`
-    if (rememberState) actionPath += '&remember=on'
+    if (location.search.includes('&remember=on')) actionPath += '&remember=on'
 
     submit(
       {
@@ -153,7 +148,7 @@ export default function PasswordlessAuthPage() {
         replace: true,
       }
     )
-  }, [hash, redirectTo, rememberState, submit])
+  }, [location.hash, location.search, redirectTo, submit])
 
   const busy = useTransition().state === 'submitting'
 
@@ -207,25 +202,13 @@ export default function PasswordlessAuthPage() {
               <input type="hidden" name="redirectTo" value={redirectTo} />
 
               <div className="mt-4 flex items-center">
-                <CheckboxPrimitive.Root
-                  id="remember"
+                <Checkbox
+                  aria-labelledby="remember"
                   name={remember.config.name}
-                  checked={rememberState}
-                  onCheckedChange={(state) => {
-                    if (state !== 'indeterminate') setRememberState(state)
-                  }}
-                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5"
-                >
-                  <CheckboxPrimitive.Indicator className="text-primary-11">
-                    <CheckIcon />
-                  </CheckboxPrimitive.Indicator>
-                </CheckboxPrimitive.Root>
-                <LabelPrimitive.Root
-                  htmlFor="remember"
-                  className="ml-2 block text-sm text-gray-12"
-                >
+                />
+                <span id="remember" className="ml-2 block text-sm text-gray-12">
                   Remember me
-                </LabelPrimitive.Root>
+                </span>
               </div>
             </fieldset>
 
