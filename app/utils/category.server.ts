@@ -2,6 +2,7 @@ import { json } from '@remix-run/cloudflare'
 import invariant from 'tiny-invariant'
 import { categories, categoryEntries } from '~/data/achievement/en.server'
 import type { definitions } from '~/supabase'
+import { getFormattedCompletionPercentage } from '.'
 
 export function getCategoriesId() {
   return categories.map((category) => category.id)
@@ -32,18 +33,14 @@ export function getCategories({
       ),
     }
 
-    const completionPercentage = (completion.done / completion.total) * 100
-    const formattedCompletionPercentage = `${
-      completionPercentage.toString().includes('.')
-        ? completionPercentage.toFixed(2)
-        : completionPercentage
-    }%`
-
     return {
       ...category,
       completion: {
         ...completion,
-        percentage: formattedCompletionPercentage,
+        percentage: getFormattedCompletionPercentage({
+          complete: completion.done,
+          total: completion.total,
+        }),
       },
     }
   })
@@ -56,21 +53,13 @@ export function getCategories({
     ),
   }
 
-  const completionPercentage = (completion.done / completion.total) * 100
-  const formattedCompletionPercentage = `${
-    completionPercentage.toString().includes('.')
-      ? completionPercentage.toFixed(2)
-      : completionPercentage
-  }%`
-
   return {
     completion: {
-      done: totalCount,
-      total: updatedCategories.reduce(
-        (prev, curr) => prev + curr.completion.total,
-        0
-      ),
-      percentage: formattedCompletionPercentage,
+      ...completion,
+      percentage: getFormattedCompletionPercentage({
+        complete: completion.done,
+        total: completion.total,
+      }),
     },
     categories: updatedCategories,
   }

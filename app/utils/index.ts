@@ -40,3 +40,18 @@ export const DEFAULT_REDIRECT = '/category/wonders-of-the-world-wotw'
 export function useRootData() {
   return useMatchesData<typeof rootLoader>('root')
 }
+
+export function getFormattedCompletionPercentage({
+  complete,
+  total,
+}: {
+  complete: number
+  total: number
+}) {
+  const completionPercentage = (complete / total) * 100
+  return `${
+    completionPercentage.toString().includes('.')
+      ? completionPercentage.toFixed(2)
+      : completionPercentage
+  }%`
+}
