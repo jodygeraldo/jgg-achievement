@@ -1,3 +1,5 @@
+import type { CategoryEntries } from '~/types/category'
+
 export const categories = [
   {
     id: 'wotw',
@@ -170,39 +172,6 @@ export const categories = [
     src: `/achievement/sumeru_the_rainforest_of_lore.png`,
   },
 ]
-
-type BaseEntry = {
-  id: string
-  title: string
-  version: string
-  requirements?: string
-  commission?: boolean
-}
-
-type Entry = {
-  description: string
-  steps?: undefined
-  dbId?: string
-  complete?: boolean
-} & BaseEntry
-
-type EntryWithStep = {
-  description?: undefined
-  steps: {
-    id: string
-    description: string
-    disabled?: boolean
-    dbId?: string
-    complete?: boolean
-  }[]
-  dbId?: undefined
-  complete?: undefined
-} & BaseEntry
-
-type CategoryEntries = {
-  id: string
-  entries: (Entry | EntryWithStep)[]
-}
 
 export const categoryEntries: CategoryEntries[] = [
   {
