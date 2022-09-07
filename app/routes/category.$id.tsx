@@ -1,4 +1,3 @@
-import { InfoCircledIcon } from '@radix-ui/react-icons'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
@@ -16,6 +15,7 @@ import { z } from 'zod'
 import { Button } from '~/components/Button'
 import Checkbox from '~/components/Checkbox'
 import Completion from '~/components/Completion'
+import Icon from '~/components/Icon'
 import { getShowAll } from '~/cookies'
 import {
   getUserCategoryEntriesById,
@@ -252,7 +252,10 @@ function InfoPopover({ content }: { content: string }) {
         aria-label="requirements"
         className="flex items-center justify-center rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-8"
       >
-        <InfoCircledIcon className="text-gray-11 transition-colors hover:text-gray-12" />
+        <Icon
+          iconId="infoCircled"
+          className="text-gray-11 transition-colors hover:text-gray-12"
+        />
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Content

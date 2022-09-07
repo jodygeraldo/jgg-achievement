@@ -1,7 +1,7 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { CheckIcon } from '@radix-ui/react-icons'
 import clsx from 'clsx'
 import * as React from 'react'
+import Icon from './Icon'
 
 type BaseProps = {
   size?: 'sm' | 'md' | 'lg'
@@ -9,7 +9,7 @@ type BaseProps = {
 
 type Props = BaseProps &
   CheckboxPrimitive.CheckboxProps &
-  Omit<React.ComponentPropsWithRef<'button'>, keyof BaseProps>
+  Omit<React.ComponentPropsWithoutRef<'button'>, keyof BaseProps>
 
 const SizeVariant: Record<NonNullable<Props['size']>, string> = {
   sm: 'h-4 w-4',
@@ -17,10 +17,9 @@ const SizeVariant: Record<NonNullable<Props['size']>, string> = {
   lg: 'h-6 w-6',
 }
 
-const Checkbox = React.forwardRef<HTMLButtonElement, Props>(
-  ({ size = 'md', ...props }, ref) => (
+export default function Checkbox({ size = 'md', ...props }: Props) {
+  return (
     <CheckboxPrimitive.Root
-      ref={ref}
       className={clsx(
         SizeVariant[size],
         'flex shrink-0 items-center justify-center rounded-md bg-gray-6 transition-colors [box-shadow:0_2px_10px_var(--blackA7)] hover:bg-gray-7 focus:outline-none focus:ring-2 focus:ring-primary-8 disabled:bg-gray-5'
@@ -28,11 +27,8 @@ const Checkbox = React.forwardRef<HTMLButtonElement, Props>(
       {...props}
     >
       <CheckboxPrimitive.Indicator className="text-primary-11">
-        <CheckIcon />
+        <Icon iconId="check" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
-)
-Checkbox.displayName = 'Checkbox'
-
-export default Checkbox
+}

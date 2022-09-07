@@ -1,4 +1,3 @@
-import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import type { LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import {
@@ -12,6 +11,7 @@ import clsx from 'clsx'
 import { Button, ButtonLink } from '~/components/Button'
 import Checkbox from '~/components/Checkbox'
 import Completion from '~/components/Completion'
+import Icon from '~/components/Icon'
 import Image from '~/components/Image'
 import { getShowAll } from '~/cookies'
 import { getCompleteCount } from '~/models/category.server'
@@ -78,7 +78,7 @@ export default function CategoryPage() {
                 prefetch="intent"
                 parentBgColorStep={2}
               >
-                <ArrowLeftIcon />
+                <Icon iconId="arrowLeft" aria-hidden />
                 Back
               </ButtonLink>
             )}

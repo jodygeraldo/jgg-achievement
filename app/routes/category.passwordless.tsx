@@ -1,6 +1,5 @@
 import { useFieldset, useForm } from '@conform-to/react'
 import { ifNonEmptyString, resolve } from '@conform-to/zod'
-import { UpdateIcon } from '@radix-ui/react-icons'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -16,6 +15,7 @@ import { useEffect, useRef, useState } from 'react'
 import { z } from 'zod'
 import { Button, ButtonLink } from '~/components/Button'
 import Checkbox from '~/components/Checkbox'
+import Icon from '~/components/Icon'
 import { hasSessionActive } from '~/session.server'
 import { getClient } from '~/supabase.server'
 import { DEFAULT_REDIRECT } from '~/utils'
@@ -267,7 +267,11 @@ function AuthProcess({
           >
             <div className="p-4">
               <div className="flex items-center gap-4">
-                <UpdateIcon className="h-5 w-5 animate-spin text-primary-3" />
+                <Icon
+                  iconId="update"
+                  className="h-5 w-5 animate-spin text-primary-3"
+                  aria-hidden
+                />
                 <p className="w-0 flex-1 text-sm font-medium text-primary-3">
                   {isValidAuth
                     ? 'Processing your authentication'
