@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/cloudflare'
+import type { LoaderArgs, SerializeFrom } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
 import {
   Form,
@@ -18,16 +18,29 @@ import { getCompleteCount } from '~/models/category.server'
 import { useRootData } from '~/utils'
 import { getCategories } from '~/utils/category.server'
 
+import * as React from 'react'
+import { CompleteContext } from '~/contexts/completeContext'
+import { getOffileCategories } from '~/models/offline.client'
+
 export async function loader({ request, context }: LoaderArgs) {
   return json({
     showAll: await getShowAll(request),
     data: getCategories(await getCompleteCount({ request, context })),
   })
 }
-
 export default function CategoryPage() {
-  const { data, showAll } = useLoaderData<typeof loader>()
+  const { data: defaultData, showAll } = useLoaderData<typeof loader>()
   const { isSessionActive } = useRootData()
+  const [data, setData] = React.useState(defaultData)
+
+  React.useEffect(() => {
+    if (!isSessionActive) {
+      async function updateData() {
+        setData(await getOffileCategories(defaultData))
+      }
+      updateData()
+    }
+  }, [defaultData, isSessionActive])
 
   const { pathname } = useLocation()
   const hideAuthButton =
@@ -36,107 +49,114 @@ export default function CategoryPage() {
     pathname === '/category/signup'
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="md:flex md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold leading-7 text-primary-12 sm:truncate sm:text-3xl sm:tracking-tight">
-            JGG Achievement
-          </h1>
-          <div className="mt-2">
-            <Completion {...data.completion} />
-          </div>
+    <CompleteContext.Provider value={[data, setData]}>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="md:flex md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold leading-7 text-primary-12 sm:truncate sm:text-3xl sm:tracking-tight">
+              JGG Achievement
+            </h1>
+            <div className="mt-2">
+              <Completion {...data.completion} />
+            </div>
 
-          <div className="mt-2">
-            <Form
-              action="/api/showall"
-              method="post"
-              replace
-              className="flex items-center gap-4"
-            >
-              <input type="hidden" name="redirectTo" value={pathname} />
-
-              <span id="showAll" className="mt-1 text-sm text-gray-11">
-                Show completed achievement
-              </span>
-              <Checkbox
-                type="submit"
-                aria-labelledby="showAll"
-                defaultChecked={showAll}
-                name="showAll"
-                size="lg"
-              />
-            </Form>
-          </div>
-        </div>
-
-        {hideAuthButton ? null : (
-          <div className="mt-4 flex items-center gap-4 md:mt-0">
-            {pathname !== '/category' && (
-              <ButtonLink
-                className="inline-flex items-center justify-center gap-2 lg:hidden"
-                to="/category"
-                prefetch="intent"
-                parentBgColorStep={2}
+            <div className="mt-2">
+              <Form
+                action="/api/showall"
+                method="post"
+                replace
+                className="flex items-center gap-4"
               >
-                <Icon iconId="arrowLeft" aria-hidden />
-                Back
-              </ButtonLink>
-            )}
-            {isSessionActive ? (
-              <Form method="post" action="/logout">
-                <Button type="submit" variant="secondary" parentBgColorStep={2}>
-                  Sign out
-                </Button>
-              </Form>
-            ) : (
-              <ButtonLink
-                to="/category/login"
-                prefetch="intent"
-                parentBgColorStep={2}
-                className="relative"
-              >
-                Sign in
-                <span className="absolute -top-2 -left-2 flex h-4 w-4">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-8 opacity-75" />
-                  <span className="relative inline-flex h-4 w-4 rounded-full bg-primary-7" />
+                <input type="hidden" name="redirectTo" value={pathname} />
+
+                <span id="showAll" className="mt-1 text-sm text-gray-11">
+                  Show completed achievement
                 </span>
-              </ButtonLink>
-            )}
+                <Checkbox
+                  type="submit"
+                  aria-labelledby="showAll"
+                  defaultChecked={showAll}
+                  name="showAll"
+                  size="lg"
+                />
+              </Form>
+            </div>
           </div>
-        )}
-      </div>
-      <div className="mt-6 lg:flex lg:gap-4">
-        {/* Mobile */}
-        <div
-          className={clsx(pathname === '/category' ? 'lg:hidden' : 'hidden')}
-        >
-          <Navigation />
-        </div>
 
-        <main
-          className={clsx(
-            pathname === '/category' ? 'hidden' : 'lg:hidden',
-            'flex-1'
+          {hideAuthButton ? null : (
+            <div className="mt-4 flex items-center gap-4 md:mt-0">
+              {pathname !== '/category' && (
+                <ButtonLink
+                  className="inline-flex items-center justify-center gap-2 lg:hidden"
+                  to="/category"
+                  prefetch="intent"
+                  parentBgColorStep={2}
+                >
+                  <Icon iconId="arrowLeft" aria-hidden />
+                  Back
+                </ButtonLink>
+              )}
+              {isSessionActive ? (
+                <Form method="post" action="/logout">
+                  <Button
+                    type="submit"
+                    variant="secondary"
+                    parentBgColorStep={2}
+                  >
+                    Sign out
+                  </Button>
+                </Form>
+              ) : (
+                <ButtonLink
+                  to="/category/login"
+                  prefetch="intent"
+                  parentBgColorStep={2}
+                  className="relative"
+                >
+                  Sign in
+                  <span className="absolute -top-2 -left-2 flex h-4 w-4">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-8 opacity-75" />
+                    <span className="relative inline-flex h-4 w-4 rounded-full bg-primary-7" />
+                  </span>
+                </ButtonLink>
+              )}
+            </div>
           )}
-        >
-          <Outlet />
-        </main>
-
-        {/* Desktop */}
-        <div className="hidden lg:block">
-          <Navigation />
         </div>
+        <div className="mt-6 lg:flex lg:gap-4">
+          {/* Mobile */}
+          <div
+            className={clsx(pathname === '/category' ? 'lg:hidden' : 'hidden')}
+          >
+            <Navigation data={data} />
+          </div>
 
-        <main className="hidden flex-1 lg:block">
-          <Outlet />
-        </main>
+          <main
+            className={clsx(
+              pathname === '/category' ? 'hidden' : 'lg:hidden',
+              'flex-1'
+            )}
+          >
+            <Outlet />
+          </main>
+
+          {/* Desktop */}
+          <div className="hidden lg:block">
+            <Navigation data={data} />
+          </div>
+
+          <main className="hidden flex-1 lg:block">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+    </CompleteContext.Provider>
   )
 }
 
-function Navigation() {
-  const { data } = useLoaderData<typeof loader>()
+type LoaderData = SerializeFrom<typeof loader>
+
+function Navigation({ data }: { data: LoaderData['data'] }) {
   const { categories } = data
 
   return (
